@@ -86,9 +86,9 @@ class Handler(BaseHTTPRequestHandler):
   if path=='/api/design-prompt':return self.send({'prompt':'使用 douyin-bubble-studio skill 设计一款原创抖音聊天气泡。先确定四边直线锚区和点九拉伸线，保证镜像可读与文字空间；导出到我的素材库，完成尺寸、边距、四边锚点与长短消息预检，再在气泡工坊里选择并应用。'})
   if path=='/api/export':
    s=state();return self.send({'version':1,'active':None if not s['active'] else {'filename':Path(s['active']['path']).name,'config':s['active']['config']}})
-  files={'/':'index.html','/index.html':'index.html','/app.css':'app.css','/app.js':'app.js'}
+  files={'/':'index.html','/index.html':'index.html','/app.css':'app.css','/app.js':'app.js','/nine-slice.mjs':'nine-slice.mjs'}
   if path not in files:return self.send({'error':'不存在'},404)
-  f=ROOT/'app/static'/files[path];kind={'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css; charset=utf-8'}[f.suffix[1:]];return self.send(f.read_bytes(),kind=kind)
+  f=ROOT/'app/static'/files[path];kind={'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','mjs':'text/javascript; charset=utf-8','css':'text/css; charset=utf-8'}[f.suffix[1:]];return self.send(f.read_bytes(),kind=kind)
  def do_POST(self):
   global STATUS
   if self.headers.get('Origin')!=f'http://127.0.0.1:{PORT}' or self.headers.get('X-Bubble-Studio')!='1':return self.send({'error':'只允许本机工作台操作'},403)
