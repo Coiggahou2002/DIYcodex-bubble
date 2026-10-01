@@ -1,0 +1,47 @@
+import unittest,tempfile,os,sys,json,struct,zlib,threading,urllib.request,urllib.error,base64,shutil
+from pathlib import Path
+from unittest.mock import patch
+TASK_DATA=tempfile.TemporaryDirectory();os.environ['BUBBLE_STUDIO_DATA']=TASK_DATA.name
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'app'))
+import server
+
+def png(w=198,h=162):
+ def chunk(tag,data):return struct.pack('>I',len(data))+tag+data+struct.pack('>I',zlib.crc32(tag+data)&0xffffffff)
+ return b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',w,h,8,6,0,0,0))+chunk(b'IDAT',zlib.compress((b'\0'+bytes([253,245,229,255])*w)*h))+chunk(b'IEND',b'')
+class StudioTests(unittest.TestCase):
+ @classmethod
+ def setUpClass(cls):
+  cls.http=server.ThreadingHTTPServer(('127.0.0.1',0),server.Handler);server.PORT=cls.http.server_port
+  cls.thread=threading.Thread(target=cls.http.serve_forever,daemon=True);cls.thread.start();cls.base=f'http://127.0.0.1:{server.PORT}'
+ @classmethod
+ def tearDownClass(cls):cls.http.shutdown();cls.http.server_close();TASK_DATA.cleanup()
+ def setUp(self):shutil.rmtree(Path(TASK_DATA.name)/'imports',ignore_errors=True);server.save(json.loads(json.dumps(server.DEFAULT)));self.folder=Path(TASK_DATA.name)/'art';self.folder.mkdir(exist_ok=True);(self.folder/'one.png').write_bytes(png());(self.folder/'two.png').write_bytes(png(160,120))
+ def request(self,path,body=None,origin=True):
+  headers={'Content-Type':'application/json','X-Bubble-Studio':'1'}
+  if origin:headers['Origin']=self.base
+  r=urllib.request.Request(self.base+path,data=None if body is None else json.dumps(body).encode(),headers=headers)
+  with urllib.request.urlopen(r) as response:return json.load(response)
+ def connect(self):self.request('/api/folder',{'path':str(self.folder)});return self.request('/api/library')['items']
+ def test_real_folder_and_independent_presets(self):
+  items=self.connect();self.assertEqual(len(items),2);a,b=items;original=(self.folder/'one.png').read_bytes();c={**a['config'],'left':60,'right':120}
+  self.request('/api/save',{'id':a['id'],'config':c});loaded=self.request('/api/library')['items'];self.assertEqual(loaded[0]['config']['left'],60);self.assertEqual(loaded[1]['config'],b['config']);self.assertEqual((self.folder/'one.png').read_bytes(),original)
+ def test_apply_restore_and_export_no_private_path(self):
+  a=self.connect()[0]
+  with patch.object(server,'bridge',return_value={'connected':True,'matched':6}):
+   self.assertEqual(self.request('/api/apply',{'id':a['id'],'config':a['config']})['status']['matched'],6)
+   exported=self.request('/api/export');self.assertNotIn(TASK_DATA.name,json.dumps(exported));self.assertEqual(exported['active']['filename'],'one.png')
+   self.request('/api/restore',{});self.assertIsNone(server.state()['active'])
+ def test_import_and_bad_png_rollback(self):
+  result=self.request('/api/import',{'name':'import.png','data':base64.b64encode(png()).decode()});self.assertTrue(result['id']);before=len(server.library())
+  with self.assertRaises(urllib.error.HTTPError):self.request('/api/import',{'name':'bad.png','data':base64.b64encode(b'bad').decode()})
+  self.assertEqual(len(server.library()),before)
+ def test_crossed_lines_rejected_and_origin_required(self):
+  a=self.connect()[0];c={**a['config'],'left':150,'right':80}
+  with self.assertRaises(urllib.error.HTTPError) as err:self.request('/api/apply',{'id':a['id'],'config':c})
+  self.assertEqual(err.exception.code,400);self.assertIsNone(server.state()['active'])
+  with self.assertRaises(urllib.error.HTTPError) as err:self.request('/api/folder',{'path':str(self.folder)},origin=False)
+  self.assertEqual(err.exception.code,403)
+ def test_asset_route_cannot_read_arbitrary_path(self):
+  with self.assertRaises(urllib.error.HTTPError) as err:self.request('/asset/../../app/server.py')
+  self.assertEqual(err.exception.code,404)
+if __name__=='__main__':unittest.main()
