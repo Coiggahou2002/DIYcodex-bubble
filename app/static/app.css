@@ -5,3 +5,5 @@
 .guide[data-key="right"] b{top:-39px}.guide[data-key="bottom"] b{right:-31px;top:4px}
 
 .preview-bubble:before{border:0;border-image:none;background-image:var(--paint);background-size:100% 100%;background-repeat:no-repeat}
+
+.preview-bubble{align-content:center}
