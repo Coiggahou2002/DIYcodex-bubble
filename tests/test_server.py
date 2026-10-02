@@ -16,8 +16,8 @@ class StudioTests(unittest.TestCase):
  @classmethod
  def tearDownClass(cls):cls.http.shutdown();cls.http.server_close();TASK_DATA.cleanup()
  def setUp(self):shutil.rmtree(Path(TASK_DATA.name)/'imports',ignore_errors=True);server.save(json.loads(json.dumps(server.DEFAULT)));self.folder=Path(TASK_DATA.name)/'art';shutil.rmtree(self.folder,ignore_errors=True);self.folder.mkdir();(self.folder/'one.png').write_bytes(png());(self.folder/'two.png').write_bytes(png(160,120))
- def request(self,path,body=None,origin=True):
-  headers={'Content-Type':'application/json','X-Bubble-Studio':'1'}
+ def request(self,path,body=None,origin=True,language="zh"):
+  headers={'Content-Type':'application/json','X-Bubble-Studio':'1','Accept-Language':language}
   if origin:headers['Origin']=self.base
   r=urllib.request.Request(self.base+path,data=None if body is None else json.dumps(body).encode(),headers=headers)
   with urllib.request.urlopen(r) as response:return json.load(response)
@@ -81,7 +81,8 @@ class StudioTests(unittest.TestCase):
  def test_native_folder_picker_and_cancel(self):
   from subprocess import CompletedProcess
   with patch.object(server.sys,'platform','darwin'),patch.object(server.subprocess,'run',return_value=CompletedProcess([],0,str(self.folder)+'\n','')) as run:
-   self.request('/api/choose-folder',{})
+   self.request('/api/choose-folder',{},language='en')
+   self.assertIn('Choose your bubble asset folder',run.call_args.args[0][2])
    self.assertEqual(len(self.request('/api/library')['items']),2)
    self.assertEqual(run.call_args.args[0][0],'/usr/bin/osascript')
   before=server.state()
