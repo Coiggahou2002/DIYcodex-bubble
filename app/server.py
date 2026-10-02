@@ -23,9 +23,10 @@ def clean_trash(s):
  remaining=[entry for entry in s.get('trash',[]) if Path(entry['stored']).is_file()]
  if remaining!=s.get('trash',[]):s['trash']=remaining;save(s)
  return s
-def choose_folder():
+def choose_folder(language="zh"):
  if sys.platform!='darwin':raise ValueError('目前仅支持 macOS 文件夹选择')
- script='try\nreturn POSIX path of (choose folder with prompt "选择气泡素材文件夹")\non error number -128\nreturn ""\nend try'
+ prompt='Choose your bubble asset folder' if language.startswith('en') else '选择气泡素材文件夹'
+ script='try\nreturn POSIX path of (choose folder with prompt "'+prompt+'")\non error number -128\nreturn ""\nend try'
  result=subprocess.run(['/usr/bin/osascript','-e',script],capture_output=True,text=True)
  if result.returncode:raise ValueError('无法打开文件夹选择窗口，请重试')
  return result.stdout.strip()
@@ -101,7 +102,7 @@ class Handler(BaseHTTPRequestHandler):
   if path=='/api/design-prompt':return self.send({'prompt':'使用 $douyin-chat-bubble skill 设计一款原创抖音聊天气泡。先确定四边直线锚区和点九拉伸线，保证镜像可读与文字空间；导出到我的素材库，完成尺寸、边距、四边锚点与长短消息预检，再在气泡工坊里选择并应用。'})
   if path=='/api/export':
    s=state();return self.send({'version':1,'active':None if not s['active'] else {'filename':Path(s['active']['path']).name,'config':s['active']['config']}})
-  files={'/':'index.html','/index.html':'index.html','/app.css':'app.css','/app.js':'app.js','/nine-slice.mjs':'nine-slice.mjs'}
+  files={'/':'index.html','/index.html':'index.html','/app.css':'app.css','/app.js':'app.js','/nine-slice.mjs':'nine-slice.mjs','/i18n.mjs':'i18n.mjs'}
   if path not in files:return self.send({'error':'不存在'},404)
   f=ROOT/'app/static'/files[path];kind={'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','mjs':'text/javascript; charset=utf-8','css':'text/css; charset=utf-8'}[f.suffix[1:]];return self.send(f.read_bytes(),kind=kind)
  def do_POST(self):
@@ -112,7 +113,7 @@ class Handler(BaseHTTPRequestHandler):
    if length>4*1024*1024:raise ValueError('请求过大')
    body=json.loads(self.rfile.read(length))
    if self.path=='/api/choose-folder':
-    selected=choose_folder()
+    selected=choose_folder(self.headers.get('Accept-Language','zh'))
     if not selected:return self.send({'ok':True,'cancelled':True})
     body={'path':selected}
    with LOCK:
