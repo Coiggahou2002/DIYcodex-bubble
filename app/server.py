@@ -41,7 +41,7 @@ def library(s=None):
    config={**defaults(w,h),**s['presets'].get(key,{})}
    items.append({'id':key,'name':name,'filename':f.name,'width':w,'height':h,'bytes':size,'douyinSize':w<=198 and h<=162 and size<=2*1024*1024,'favorite':key in s['favorites'],'config':config,'url':'/asset/'+key,'path':str(f.resolve())})
  return items
-def defaults(w,h):return {'left':round(w*.35),'right':round(w*.73),'top':round(h*.45),'bottom':round(h*.55),'scale':round(max(.01,min(.6,240/w,98/h)),4),'radius':0,'color':'#44362f','padding':[29,37,36,48],'width':w,'height':h}
+def defaults(w,h):return {'left':round(w*.35),'right':round(w*.73),'top':round(h*.45),'bottom':round(h*.55),'scale':round(max(.01,min(.6,240/w,98/h)),4),'radius':0,'borderWidth':0,'borderColor':'#d0d0d0','color':'#44362f','padding':[29,37,36,48],'width':w,'height':h}
 def validate(c,w,h):
  import re
  c={**defaults(w,h),**c,'width':w,'height':h}
@@ -51,6 +51,9 @@ def validate(c,w,h):
  if not .01<=c['scale']<=2:raise ValueError('比例需在 1%–200% 之间')
  c['radius']=float(c['radius'])
  if not 0<=c['radius']<=200:raise ValueError('圆角需在 0–200 像素之间')
+ c['borderWidth']=float(c['borderWidth'])
+ if not 0<=c['borderWidth']<=20:raise ValueError('边框需在 0–20 像素之间')
+ if not re.fullmatch(r'#[0-9a-fA-F]{6}',c['borderColor']):raise ValueError('边框颜色需为六位十六进制颜色')
  if not re.fullmatch(r'#[0-9a-fA-F]{6}',c['color']):raise ValueError('文字颜色需为六位十六进制颜色')
  if len(c['padding'])!=4 or any(not 0<=float(v)<=200 for v in c['padding']):raise ValueError('文字边距需在 0–200 之间')
  c['padding']=[float(v) for v in c['padding']];return c

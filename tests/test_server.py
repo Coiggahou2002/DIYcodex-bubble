@@ -49,12 +49,14 @@ class StudioTests(unittest.TestCase):
    self.assertLessEqual(h*c['scale'],98.1)
   (self.folder/'large.png').write_bytes(png(1000,500))
   a=next(i for i in self.connect() if i['width']==1000)
-  c={**a['config'],'scale':.05,'radius':24}
+  c={**a['config'],'scale':.05,'radius':24,'borderWidth':2.5,'borderColor':'#123456'}
   self.request('/api/save',{'id':a['id'],'config':c})
   saved=next(i for i in self.request('/api/library')['items'] if i['id']==a['id'])
   self.assertEqual(saved['config']['scale'],.05)
   self.assertEqual(saved['config']['radius'],24)
-  for bad in ({**c,'scale':.001},{**c,'radius':-1},{**c,'radius':201}):
+  self.assertEqual(saved['config']['borderWidth'],2.5)
+  self.assertEqual(saved['config']['borderColor'],'#123456')
+  for bad in ({**c,'scale':.001},{**c,'radius':-1},{**c,'radius':201},{**c,'borderWidth':21},{**c,'borderColor':'invalid'}):
    with self.assertRaises(urllib.error.HTTPError):self.request('/api/save',{'id':a['id'],'config':bad})
  def test_asset_route_cannot_read_arbitrary_path(self):
   with self.assertRaises(urllib.error.HTTPError) as err:self.request('/asset/../../app/server.py')
