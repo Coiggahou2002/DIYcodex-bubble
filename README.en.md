@@ -12,7 +12,11 @@ Supports **Codex and Doubao desktop apps**. Only **your messages** get a bubble.
 
 An independent appearance tool. **Not an official OpenAI or Codex product.** It does not modify the official app installation.
 
-[Download the latest release](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [Create your own bubble](#want-to-create-your-own-bubble) · [Usage responsibility](#license-and-responsibility)
+[Online bubble gallery](https://kaitongg-bit.github.io/DIYcodex-bubble/) · [Contribute a bubble](COMMUNITY.md#manual-submissions) · [Download the latest release](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [Create your own bubble](#want-to-create-your-own-bubble) · [Usage responsibility](#license-and-responsibility)
+
+![Alien-cat bubbles in the Codex-inspired chat simulator](docs/images/chat-simulation.png)
+
+*Try the artwork with short and long messages. This is an independent simulation, not a real Codex screenshot.*
 
 ![Light-mode Bubble Studio with an alien-cat preview and LOVE and cooking-cat assets in the library](docs/images/studio-overview-en.jpg)
 
@@ -72,10 +76,6 @@ Import the finished PNG here to tune, preview, and apply it. The studio's **Desi
 ## Try a bubble before bringing it into chat
 
 [Open the online gallery](https://kaitongg-bit.github.io/DIYcodex-bubble/). Pick a design and try it in a Codex-inspired desktop chat simulator, with light/dark themes and your own sample messages. It never connects to your account or reads real conversations.
-
-![Alien-cat bubble in the Codex-inspired chat simulator](docs/images/codex-simulation.jpg)
-
-*An independent simulation, not a real Codex screenshot. Only user messages receive the artwork.*
 
 **Alien Cat, LOVE, and Cooking Cat** are included on the desktop studio's first launch. Nothing is automatically applied to your chats. Use **Restore built-in presets** to recover deleted presets.
 

@@ -12,7 +12,11 @@
 
 非 OpenAI / Codex 官方产品。独立的聊天外观工具，不修改官方应用安装包。
 
-[下载最新版](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [想画新气泡？](#想画一款自己的气泡) · [使用责任](RESPONSIBILITY.md)
+[在线气泡库](https://kaitongg-bit.github.io/DIYcodex-bubble/) · [贡献气泡](COMMUNITY.md#手动投稿) · [下载最新版](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [想画新气泡？](#想画一款自己的气泡) · [使用责任](RESPONSIBILITY.md)
+
+![外星小猫在 Codex 风格的聊天模拟器中](docs/images/chat-simulation.png)
+
+*聊天模拟预览：看看短句、长消息中的气泡效果。独立模拟页面，不是真实 Codex 截图。*
 
 ![气泡工坊：左边选素材，中间拖动调整，右边预览聊天效果](docs/images/studio-overview.jpg)
 
@@ -72,10 +76,6 @@
 ## 先试试，再带回聊天
 
 [打开在线作品库](https://kaitongg-bit.github.io/DIYcodex-bubble/)：选一款气泡，就能在接近 Codex 桌面布局的聊天模拟器里试效果。支持浅色、深色和输入自己的消息，不连接你的账号，也不读取真实聊天。
-
-![外星小猫在 Codex 风格的聊天模拟器中](docs/images/codex-simulation.jpg)
-
-*这是独立模拟预览，不是真实 Codex 截图。只装饰用户消息，助手回复保持普通样式。*
 
 首次打开本机工坊，**外星小猫、LOVE、小猫炒菜**三款预设已经在库里，不会自动应用到聊天。删掉以后想找回，点「恢复内置预设」。
 
