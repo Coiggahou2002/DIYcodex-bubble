@@ -7,3 +7,5 @@
 .preview-bubble:before{border:0;border-image:none;background-image:var(--paint);background-size:100% 100%;background-repeat:no-repeat}
 
 .preview-bubble{align-content:center}
+
+.text-tools{flex-wrap:wrap;gap:12px}.text-tools input[type=number]{width:72px}.text-tools #fitScale{font-size:11px;padding:8px 10px}.size-hint{margin-top:12px;font-size:11px}.radius-hint{font-size:10px;margin-top:4px}.preview-bubble:before{border-radius:var(--radius,0px)}
