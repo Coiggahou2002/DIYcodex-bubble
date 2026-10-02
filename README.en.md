@@ -59,13 +59,21 @@ The companion [bubble design skill](https://github.com/kaitongg-bit/douyinQIPAO)
 
 Import the finished PNG here to tune, preview, and apply it. The studio's **Design a bubble** entry links to the skill and provides a prompt; it does not host an image-generation service.
 
-## A bubble community: what's next?
+## Try a bubble before bringing it into chat
 
-A place to browse designs, preview short and long messages, upload a PNG, and tune it online. Submissions become public **only after human review**.
+[Open the online gallery](https://kaitongg-bit.github.io/DIYcodex-bubble/). Pick a design and try it in a Codex-inspired desktop chat simulator, with light/dark themes and your own sample messages. It never connects to your account or reads real conversations.
 
-The community would accept existing images only. It would not use Codex's AI capabilities to design or generate bubbles. Create artwork in your own Codex session if you use the skill, then bring the PNG with you.
+![Alien-cat bubble in the Codex-inspired chat simulator](docs/images/codex-simulation.jpg)
 
-**The community is not live yet.** The first version is planned around an approved gallery, online preview and tuning, PNG submissions, a moderation dashboard, and downloadable asset packages. See the [community proposal](COMMUNITY.md) for the workflow and launch requirements.
+*An independent simulation, not a real Codex screenshot. Only user messages receive the artwork.*
+
+**Alien Cat, LOVE, and Cooking Cat** are included on the desktop studio's first launch. Nothing is automatically applied to your chats. Use **Restore built-in presets** to recover deleted presets.
+
+Download a PNG and its `.bubble.json` settings from a work's detail page. Import and select the PNG in the desktop studio, then **Import settings** to retain its stretch guides and text placement. Preview before applying.
+
+**Preview your PNG** processes an existing image in your browser only. It does not upload or publish it, and there is no AI image generation. Public works are manually reviewed and published by the maintainer; this version has no login or moderation dashboard. See [manual submissions](COMMUNITY.md#manual-submissions).
+
+Public counts come from each PNG's GitHub Releases download statistics. They may be delayed and do not represent unique users. Unavailable counts are shown as unavailable. The local gallery labels its separate, local-only counter.
 
 ## License and responsibility
 

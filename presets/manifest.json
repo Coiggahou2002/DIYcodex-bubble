@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "alien-cat",
+      "name": "外星小猫",
+      "nameEn": "Alien cat",
+      "filename": "alien-cat.png",
+      "author": "kaitongg",
+      "license": "Non-commercial only",
+      "config": {
+        "left": 69,
+        "right": 117,
+        "top": 73,
+        "bottom": 89,
+        "scale": 0.6,
+        "radius": 0.0,
+        "borderWidth": 0.0,
+        "borderColor": "#d0d0d0",
+        "color": "#ffffff",
+        "padding": [
+          31.8,
+          47.3,
+          33.2,
+          37.7
+        ],
+        "width": 198,
+        "height": 162
+      },
+      "description": {
+        "zh": "一点绿色，一点古怪，给聊天留一点可爱。",
+        "en": "A little green, a little weird, and a little joy in every message."
+      },
+      "downloadUrl": "https://github.com/kaitongg-bit/DIYcodex-bubble/releases/download/presets-v1/alien-cat.png",
+      "downloadStatsUrl": "https://api.github.com/repos/kaitongg-bit/DIYcodex-bubble/releases/tags/presets-v1"
+    },
+    {
+      "id": "love",
+      "name": "LOVE 手绘框",
+      "nameEn": "LOVE frame",
+      "filename": "love.png",
+      "author": "kaitongg",
+      "license": "Non-commercial only",
+      "config": {
+        "left": 89,
+        "right": 103,
+        "top": 73,
+        "bottom": 87,
+        "scale": 0.6,
+        "color": "#44362f",
+        "padding": [
+          33.1,
+          32.6,
+          21,
+          32.4
+        ],
+        "width": 198,
+        "height": 162,
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "手绘线条和 LOVE 字母，简单又有自己的态度。",
+        "en": "A hand-drawn frame with a little LOVE around the edges."
+      },
+      "downloadUrl": "https://github.com/kaitongg-bit/DIYcodex-bubble/releases/download/presets-v1/love.png",
+      "downloadStatsUrl": "https://api.github.com/repos/kaitongg-bit/DIYcodex-bubble/releases/tags/presets-v1"
+    },
+    {
+      "id": "chef-cat",
+      "name": "小猫炒菜",
+      "nameEn": "Cooking cat",
+      "filename": "chef-cat.png",
+      "author": "kaitongg",
+      "license": "Non-commercial only",
+      "config": {
+        "left": 97,
+        "right": 111,
+        "top": 78,
+        "bottom": 89,
+        "scale": 0.6,
+        "color": "#ffffff",
+        "padding": [
+          35.3,
+          35.4,
+          31.2,
+          43.3
+        ],
+        "width": 198,
+        "height": 162,
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "小猫掌勺，把日常的对话炒得热热闹闹。",
+        "en": "A tiny cooking cat brings a warm touch to everyday conversations."
+      },
+      "downloadUrl": "https://github.com/kaitongg-bit/DIYcodex-bubble/releases/download/presets-v1/chef-cat.png",
+      "downloadStatsUrl": "https://api.github.com/repos/kaitongg-bit/DIYcodex-bubble/releases/tags/presets-v1"
+    }
+  ]
+}
