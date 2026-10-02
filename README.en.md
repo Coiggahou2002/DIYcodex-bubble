@@ -6,7 +6,7 @@ Use the [bubble design skill](https://github.com/kaitongg-bit/douyinQIPAO) to cr
 
 The built-in Bubble Studio lets you personalize stretch guides, text placement, colors, corners, and borders. Alien cats, LOVE frames, cooking cats—give your everyday messages a little personality.
 
-Only **your messages** get a bubble. Codex replies keep their original appearance. Click **Restore default** whenever you want to switch back.
+Supports **Codex and Doubao desktop apps**. Only **your messages** get a bubble. Assistant replies keep their original appearance. Click **Restore default** whenever you want to switch back.
 
 **macOS only · Chinese / English UI · Local library · Restore anytime · Non-commercial only**
 
@@ -30,16 +30,26 @@ Use **EN / 中文** in the top-right corner to switch languages. Your bubble set
 
 ## Getting started
 
-Currently supported on **macOS with the Codex / ChatGPT desktop app**. Python 3.9+ and Node.js 22+ must already be installed. This release is not a standalone app with bundled runtimes.
+Currently supported on **macOS with the Codex / ChatGPT or Doubao desktop app**. Python 3.9+ and Node.js 22+ must already be installed. This release is not a standalone app with bundled runtimes.
 
 1. [Download the latest ZIP](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) and extract it somewhere you can keep it.
 2. In **Finder**, double-click `Start Bubble Studio.command`. A Terminal window opens to keep the studio running; leave it open while using the studio.
 3. Open [Bubble Studio](http://127.0.0.1:19329). Click **＋** to import a PNG, or **Connect a folder** to select your asset folder.
-4. Choose a bubble, adjust it on the canvas, preview, save, then click **Apply to Codex**.
+4. Select **Codex / Doubao** in the header, choose and tune a bubble, then save and apply it to the selected app.
 
-**Not connected?** Save your current input and fully quit Codex / ChatGPT with `⌘Q`. Open the studio in Safari or Chrome, then click **Launch Codex with bubbles**. The initial connection requires restarting the desktop app; the studio never force-quits your conversation. Closing a window is not the same as quitting.
+**Not connected?** Save your current input and fully quit the selected desktop app with `⌘Q`. Open the studio in Safari or Chrome, then click its **Launch … with bubbles** button. The initial connection requires restarting the desktop app; the studio never force-quits your conversation. Closing a window is not the same as quitting.
 
 **Seeing source code after double-clicking?** Open the launcher from Finder. Codex's file preview only displays its contents. For runtime requirements and running from source, see [Development notes](DEVELOPMENT.md).
+
+## One studio, two apps
+
+![Bubble Studio with Doubao selected](docs/images/dual-platform-studio.jpg)
+
+Choose Codex or Doubao in the header. They share PNGs and the editor, while active bubbles and connection status stay separate. Switching apps does not apply a theme. Restore affects only the selected app; deleting an image used by both restores both.
+
+Doubao's user-message selector is built in. The supported macOS installation is `/Applications/Doubao.app`; future app updates may require adaptation. Existing Codex settings migrate without losing artwork or active themes. Doubao starts with no active theme.
+
+Stop any older standalone Doubao studio before using this version to avoid competing monitors. Its private `.local/` files are not bundled or published. Connect your original asset folder to reuse PNGs. The full-window simulator remains Codex-inspired; Doubao uses the ordinary bubble preview.
 
 ## A tip for better stretching
 

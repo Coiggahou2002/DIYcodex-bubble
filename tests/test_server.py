@@ -65,7 +65,7 @@ class StudioTests(unittest.TestCase):
    self.request('/api/apply',{'id':a['id'],'config':c})
    deleted=self.request('/api/delete',{'id':a['id']})
    self.assertTrue(deleted['activeRemoved']);self.assertFalse(path.exists())
-   self.assertIsNone(server.state()['active']);bridge.assert_called_with('restore')
+   self.assertIsNone(server.state()['active']);bridge.assert_called_with('restore','codex')
    library=self.request('/api/library');self.assertEqual(len(library['items']),1)
    self.assertEqual(library['trashCount'],1);self.assertNotIn(TASK_DATA.name,json.dumps(library['latestTrashId']))
    restored=self.request('/api/undo-delete',{'token':deleted['token']})
@@ -123,6 +123,38 @@ class StudioTests(unittest.TestCase):
   self.assertEqual(base64.b64decode(result['data']),(server.ROOT/'presets/love.png').read_bytes())
   self.assertEqual(next(i for i in self.request('/api/gallery')['items'] if i['id']=='love')['downloads'],before+1)
   with self.assertRaises(urllib.error.HTTPError):self.request('/api/gallery-download',{'id':'../server.py'})
+ def test_platform_isolation_switch_restore_and_delete(self):
+  a,b=self.connect()
+  with patch.object(server,'bridge',return_value={'connected':True,'matched':1}) as bridge:
+   self.request('/api/apply',{'id':a['id'],'config':a['config'],'platform':'codex'})
+   self.request('/api/platform',{'platform':'doubao'})
+   self.assertIsNone(self.request('/api/library')['activeId']);self.assertEqual(server.state()['debugPort'],19326)
+   self.request('/api/apply',{'id':b['id'],'config':b['config'],'platform':'doubao'})
+   bridge.assert_called_with('apply','doubao')
+   with self.assertRaises(urllib.error.HTTPError):self.request('/api/restore',{'platform':'codex'})
+   self.request('/api/restore',{'platform':'doubao'});bridge.assert_called_with('restore','doubao')
+   self.assertEqual(server.state()['platforms']['codex']['active']['id'],a['id'])
+   self.request('/api/apply',{'id':a['id'],'config':a['config'],'platform':'doubao'})
+   self.request('/api/delete',{'id':a['id']})
+   self.assertIsNone(server.state()['platforms']['codex']['active']);self.assertIsNone(server.state()['platforms']['doubao']['active'])
+   self.assertIn(unittest.mock.call('restore','codex'),bridge.call_args_list)
+   self.assertIn(unittest.mock.call('restore','doubao'),bridge.call_args_list)
+   self.request('/api/platform',{'platform':'codex'});self.assertEqual(server.state()['debugPort'],19327)
+ def test_legacy_state_migrates_to_codex_without_losing_settings(self):
+  a=self.connect()[0];legacy={**json.loads(json.dumps(server.DEFAULT)),'active':{'id':a['id'],'path':a['path'] if 'path' in a else str(self.folder/'one.png'),'config':a['config'],'version':'legacy'},'presets':{a['id']:a['config']}}
+  server.STATE.write_text(json.dumps(legacy));migrated=server.state()
+  self.assertEqual(migrated['platforms']['codex']['active']['id'],a['id']);self.assertIsNone(migrated['platforms']['doubao']['active'])
+  self.request('/api/platform',{'platform':'doubao'})
+  self.assertEqual(server.state()['presets'][a['id']],a['config']);self.assertEqual(server.state()['platforms']['codex']['active']['version'],'legacy')
+ def test_launch_uses_selected_platform_and_its_port(self):
+  from subprocess import CompletedProcess
+  exists=Path.exists
+  for key,exe,port in [('doubao','/Applications/Doubao.app/Contents/MacOS/Doubao',19326),('codex','/Applications/ChatGPT.app/Contents/MacOS/ChatGPT',19327)]:
+   self.request('/api/platform',{'platform':key})
+   with patch.object(server.sys,'platform','darwin'),patch.object(Path,'exists',lambda p:str(p)==exe or exists(p)),patch.object(server.subprocess,'run',return_value=CompletedProcess([],1)) as run,patch.object(server.subprocess,'Popen') as launch:
+    self.request('/api/launch',{'platform':key})
+    self.assertEqual(launch.call_args.args[0],[exe,'--remote-debugging-address=127.0.0.1',f'--remote-debugging-port={port}'])
+    self.assertEqual(run.call_args.args[0][0],'/usr/bin/pgrep')
  def test_asset_route_cannot_read_arbitrary_path(self):
   with self.assertRaises(urllib.error.HTTPError) as err:self.request('/asset/../../app/server.py')
   self.assertEqual(err.exception.code,404)

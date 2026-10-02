@@ -49,3 +49,11 @@ node --check app/static/app.js
 `presets/manifest.json` 管理已获分发授权的内置 PNG 与配置。首次读取本机库将它们复制到私有数据目录，不覆盖用户设置；删除后不会自行重建，显式恢复才补回。
 
 `python3 scripts/export-gallery.py /tmp/bubble-gallery` 导出零后端站点。本机 `/gallery` 使用本机下载计数；静态页面从公开 GitHub Releases API 读取全站 PNG 下载统计。PNG 的私有预览使用浏览器 Blob URL，无上传。社区收录规则见 COMMUNITY.md。
+
+## 双平台适配
+
+`app/platforms.mjs` 定义 Codex（19327）与豆包（19326）的端口、默认用户消息选择器及页面允许列表。工坊端口仍为 19329。`bridge.mjs <state> <action> <platform>` 显式指定平台；逐页面容错，但所有页面失败时 connected 为 false。高级覆盖配置位于私有 `platforms.<key>.userSelector`，不共享旧顶层 selector，也不做启发式扫描。
+
+私有状态的 `platforms.codex.active` / `platforms.doubao.active` 保存各自应用快照；旧顶层 active 迁移到 Codex。顶层 active/debugPort 为当前选择平台的兼容视图，保存时同步相应快照。原图预设、收藏、素材库继续共享。后台各平台监控只使用对应快照；API 拒绝带有过期平台标记的写操作。
+
+补充桥测试：`node --test tests/bridge.test.mjs`。实机启动不得强制关闭任何应用；旧独立工坊必须避免同时监控。

@@ -1,5 +1,20 @@
 // UI text only: language changes never save or apply a bubble.
 export const english = {
+  "豆包": "Doubao",
+  "发送消息给 {platform}": "Message {platform}",
+  "应用平台": "Target app",
+  "{platform} 已连接": "{platform} connected",
+  "{platform} 未连接": "{platform} not connected",
+  "气泡已保存，等待连接 {platform}。": "Bubble saved. Waiting for {platform}.",
+  "设置已保存，请启动 {platform} 连接": "Settings saved. Launch {platform} to connect.",
+  "应用到 {platform}": "Apply to {platform}",
+  "启动 {platform} 并换肤": "Launch {platform} with bubbles",
+  "用于聊天；抖音上传需调整尺寸": "For chat; resize before uploading to Douyin",
+  "不支持的平台": "Unsupported app",
+  "平台已切换，请刷新后重试": "The target app changed. Refresh and try again.",
+  "未找到豆包桌面应用，请确认已安装 /Applications/Doubao.app": "Doubao desktop app not found. Install it in /Applications/Doubao.app.",
+  "请先保存输入并用 ⌘Q 完全退出豆包，再点击启动。": "Save your input and fully quit Doubao with ⌘Q before launching.",
+
   "气泡工坊 · Bubble Studio": "DIY Codex Bubble · Bubble Studio",
   "气泡工坊": "Bubble Studio",
   "设计 · 调整 · 应用": "DESIGN · TUNE · APPLY",
