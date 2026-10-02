@@ -78,6 +78,26 @@ class StudioTests(unittest.TestCase):
   with self.assertRaises(urllib.error.HTTPError):self.request('/api/undo-delete',{'token':deleted['token']})
   self.assertEqual(path.read_bytes(),b'new file');self.assertEqual(len(server.state()['trash']),1)
   with self.assertRaises(urllib.error.HTTPError):self.request('/api/delete',{'id':'arbitrary-path'})
+ def test_native_folder_picker_and_cancel(self):
+  from subprocess import CompletedProcess
+  with patch.object(server.sys,'platform','darwin'),patch.object(server.subprocess,'run',return_value=CompletedProcess([],0,str(self.folder)+'\n','')) as run:
+   self.request('/api/choose-folder',{})
+   self.assertEqual(len(self.request('/api/library')['items']),2)
+   self.assertEqual(run.call_args.args[0][0],'/usr/bin/osascript')
+  before=server.state()
+  with patch.object(server,'choose_folder',return_value=''):
+   self.assertTrue(self.request('/api/choose-folder',{})['cancelled'])
+  self.assertEqual(server.state(),before)
+ def test_open_trash_and_external_removal(self):
+  a=self.connect()[0];self.request('/api/delete',{'id':a['id']})
+  entry=server.state()['trash'][0]
+  self.assertTrue(Path(entry['stored']).name.endswith('-one.png'))
+  with patch.object(server.sys,'platform','darwin'),patch.object(server.subprocess,'run') as run:
+   self.request('/api/open-trash',{'path':'/untrusted'})
+   self.assertEqual(run.call_args.args[0],['/usr/bin/open',str((server.DATA/'trash').resolve())])
+  Path(entry['stored']).unlink()
+  result=self.request('/api/library')
+  self.assertEqual(result['trashCount'],0);self.assertIsNone(result['latestTrashId'])
  def test_asset_route_cannot_read_arbitrary_path(self):
   with self.assertRaises(urllib.error.HTTPError) as err:self.request('/asset/../../app/server.py')
   self.assertEqual(err.exception.code,404)
