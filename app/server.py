@@ -9,7 +9,7 @@ DATA.mkdir(parents=True,exist_ok=True)
 STATE=DATA/'state.json'
 LOCK=threading.RLock()
 STOP=threading.Event()
-DEFAULT={'folders':[],'presets':{},'favorites':[],'active':None,'debugPort':19327}
+DEFAULT={'folders':[],'presets':{},'favorites':[],'active':None,'debugPort':19327,'trash':[]}
 STATUS={'connected':False,'matched':0}
 PORT=19329
 NAMES={'cat-big-paw-scruffy':'毛茸茸猫咪 · 大爪子','cat-big-paw-doodle':'涂鸦猫咪 · 大爪子','chef-cat-wok-doodle':'猫咪主厨','onigiri-cat-doodle':'饭团猫咪','guangdong-stool':'广东小板凳','rippled-glass-nine-slice':'水波玻璃','mondrian-painting':'蒙德里安画框','mondrian':'蒙德里安','colorful-happy-doodle':'彩色快乐涂鸦','happy-stickman':'快乐小人','love-square-charcoal':'LOVE 方形炭笔','love-charcoal':'LOVE 炭笔'}
@@ -82,13 +82,13 @@ class Handler(BaseHTTPRequestHandler):
   if path=='/api/library':
    s=state();items=library(s)
    for item in items:item.pop('path')
-   return self.send({'items':items,'folders':s['folders'],'activeId':s['active']['id'] if s['active'] else None,'preferredId':s.get('preferredId'),'status':STATUS})
+   return self.send({'items':items,'folders':s['folders'],'activeId':s['active']['id'] if s['active'] else None,'preferredId':s.get('preferredId'),'trashCount':len(s.get('trash',[])),'latestTrashId':s['trash'][-1]['token'] if s.get('trash') else None,'status':STATUS})
   if path=='/api/status':return self.send({**STATUS,'activeId':state()['active']['id'] if state()['active'] else None})
   if path.startswith('/asset/'):
    item=next((x for x in library() if x['id']==path[7:]),None)
    if not item:return self.send({'error':'素材不存在'},404)
    return self.send(Path(item['path']).read_bytes(),kind='image/png')
-  if path=='/api/design-prompt':return self.send({'prompt':'使用 douyin-bubble-studio skill 设计一款原创抖音聊天气泡。先确定四边直线锚区和点九拉伸线，保证镜像可读与文字空间；导出到我的素材库，完成尺寸、边距、四边锚点与长短消息预检，再在气泡工坊里选择并应用。'})
+  if path=='/api/design-prompt':return self.send({'prompt':'使用 $douyin-chat-bubble skill 设计一款原创抖音聊天气泡。先确定四边直线锚区和点九拉伸线，保证镜像可读与文字空间；导出到我的素材库，完成尺寸、边距、四边锚点与长短消息预检，再在气泡工坊里选择并应用。'})
   if path=='/api/export':
    s=state();return self.send({'version':1,'active':None if not s['active'] else {'filename':Path(s['active']['path']).name,'config':s['active']['config']}})
   files={'/':'index.html','/index.html':'index.html','/app.css':'app.css','/app.js':'app.js','/nine-slice.mjs':'nine-slice.mjs'}
@@ -100,8 +100,9 @@ class Handler(BaseHTTPRequestHandler):
   try:
    length=int(self.headers.get('Content-Length','0'))
    if length>4*1024*1024:raise ValueError('请求过大')
-   body=json.loads(self.rfile.read(length));s=state()
+   body=json.loads(self.rfile.read(length))
    with LOCK:
+    s=state()
     if self.path=='/api/folder':
      p=Path(body['path']).expanduser().resolve()
      if not p.is_dir():raise ValueError('文件夹不存在')
@@ -116,6 +117,30 @@ class Handler(BaseHTTPRequestHandler):
      try:png_info(p)
      except Exception:p.unlink();raise
      return self.send({'ok':True,'id':asset_id(p)})
+    if self.path=='/api/delete':
+     item=next((x for x in library(s) if x['id']==body['id']),None)
+     if not item:raise ValueError('素材不存在')
+     source=Path(item['path']);token=uuid.uuid4().hex
+     trash=DATA/'trash';trash.mkdir(exist_ok=True);destination=trash/(token+'.png')
+     shutil.move(str(source),str(destination))
+     entry={'token':token,'id':item['id'],'original':str(source),'stored':str(destination)}
+     s.setdefault('trash',[]).append(entry)
+     removed_active=bool(s['active'] and s['active']['id']==item['id'])
+     if removed_active:s['active']=None
+     try:save(s)
+     except Exception:shutil.move(str(destination),str(source));raise
+     if removed_active:STATUS=bridge('restore')
+     return self.send({'ok':True,'token':token,'activeRemoved':removed_active})
+    if self.path=='/api/undo-delete':
+     entry=next((x for x in s.get('trash',[]) if x['token']==body['token']),None)
+     if not entry:raise ValueError('未找到可恢复的素材')
+     original=Path(entry['original']);stored=Path(entry['stored'])
+     if original.exists() or original.is_symlink():raise ValueError('原位置已有同名文件，恢复未覆盖任何文件')
+     original.parent.mkdir(parents=True,exist_ok=True)
+     shutil.move(str(stored),str(original));s['trash']=[x for x in s['trash'] if x['token']!=entry['token']]
+     try:save(s)
+     except Exception:shutil.move(str(original),str(stored));raise
+     return self.send({'ok':True,'id':entry['id']})
     if self.path=='/api/favorite':
      key=body['id'];s['favorites']=[x for x in s['favorites'] if x!=key] if key in s['favorites'] else s['favorites']+[key];save(s);return self.send({'ok':True})
     if self.path in ('/api/save','/api/apply'):
@@ -130,7 +155,7 @@ class Handler(BaseHTTPRequestHandler):
      save(s)
     elif self.path=='/api/restore':s['active']=None;save(s)
     elif self.path=='/api/launch':
-     if sys.platform!='darwin':raise ValueError('内置启动目前支持 macOS；其他系统请手动开启本机调试端口')
+     if sys.platform!='darwin':raise ValueError('目前仅支持 macOS')
      app=next((p for p in [Path('/Applications/ChatGPT.app/Contents/MacOS/ChatGPT'),Path('/Applications/Codex.app/Contents/MacOS/Codex')] if p.exists()),None)
      if not app:raise ValueError('未找到 ChatGPT 或 Codex 应用')
      running=subprocess.run(['/usr/bin/pgrep','-f','^'+str(app)],capture_output=True)

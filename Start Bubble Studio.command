@@ -1,9 +1,16 @@
 #!/bin/zsh
 set -u
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 cd "${0:A:h}"
 if ! /usr/bin/curl -fsS --max-time 1 http://127.0.0.1:19329/api/library >/dev/null 2>&1; then
   mkdir -p .local
-  nohup /usr/bin/python3 "$PWD/app/server.py" > "$PWD/.local/studio.log" 2>&1 < /dev/null &
+  PYTHON_BIN="$(command -v python3 || true)"
+  if [[ -z "$PYTHON_BIN" ]]; then
+    print '未找到 Python 3，请先安装 Python 3.9 或以上版本。详见 README。'
+    read -r '?按回车关闭。'
+    exit 1
+  fi
+  nohup "$PYTHON_BIN" "$PWD/app/server.py" > "$PWD/.local/studio.log" 2>&1 < /dev/null &
   for attempt in {1..30}; do
     /usr/bin/curl -fsS --max-time 1 http://127.0.0.1:19329/api/library >/dev/null 2>&1 && break
     sleep 0.2

@@ -58,6 +58,26 @@ class StudioTests(unittest.TestCase):
   self.assertEqual(saved['config']['borderColor'],'#123456')
   for bad in ({**c,'scale':.001},{**c,'radius':-1},{**c,'radius':201},{**c,'borderWidth':21},{**c,'borderColor':'invalid'}):
    with self.assertRaises(urllib.error.HTTPError):self.request('/api/save',{'id':a['id'],'config':bad})
+ def test_delete_undo_preserves_png_preset_and_active_restore(self):
+  a=self.connect()[0];path=self.folder/'one.png';original=path.read_bytes()
+  c={**a['config'],'radius':16}
+  with patch.object(server,'bridge',return_value={'connected':True,'matched':2}) as bridge:
+   self.request('/api/apply',{'id':a['id'],'config':c})
+   deleted=self.request('/api/delete',{'id':a['id']})
+   self.assertTrue(deleted['activeRemoved']);self.assertFalse(path.exists())
+   self.assertIsNone(server.state()['active']);bridge.assert_called_with('restore')
+   library=self.request('/api/library');self.assertEqual(len(library['items']),1)
+   self.assertEqual(library['trashCount'],1);self.assertNotIn(TASK_DATA.name,json.dumps(library['latestTrashId']))
+   restored=self.request('/api/undo-delete',{'token':deleted['token']})
+   self.assertEqual(restored['id'],a['id']);self.assertEqual(path.read_bytes(),original)
+   self.assertEqual(server.state()['presets'][a['id']]['radius'],16)
+   self.assertIsNone(server.state()['active']);self.assertEqual(self.request('/api/library')['trashCount'],0)
+ def test_undo_delete_refuses_overwriting_and_unknown_id(self):
+  a=self.connect()[0];deleted=self.request('/api/delete',{'id':a['id']})
+  path=self.folder/'one.png';path.write_bytes(b'new file')
+  with self.assertRaises(urllib.error.HTTPError):self.request('/api/undo-delete',{'token':deleted['token']})
+  self.assertEqual(path.read_bytes(),b'new file');self.assertEqual(len(server.state()['trash']),1)
+  with self.assertRaises(urllib.error.HTTPError):self.request('/api/delete',{'id':'arbitrary-path'})
  def test_asset_route_cannot_read_arbitrary_path(self):
   with self.assertRaises(urllib.error.HTTPError) as err:self.request('/asset/../../app/server.py')
   self.assertEqual(err.exception.code,404)
