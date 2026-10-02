@@ -14,7 +14,8 @@ export function acceptsTarget(target,key){
  if(target.type!=='page'||!target.webSocketDebuggerUrl)return false;
  try{const url=new URL(target.url);
   if(key==='codex')return url.protocol==='app:'&&url.hostname==='-';
-  return key==='doubao'&&((url.protocol==='https:'&&(url.hostname==='doubao.com'||url.hostname.endsWith('.doubao.com')))||
+  return key==='doubao'&&((url.protocol==='doubao:'&&url.hostname==='doubao-chat')||
+   (url.protocol==='https:'&&(url.hostname==='doubao.com'||url.hostname.endsWith('.doubao.com')))||
    (url.protocol==='app:'&&(url.hostname==='-'||url.hostname==='doubao'))||
    (url.protocol==='file:'&&decodeURIComponent(url.pathname).includes('/Doubao.app/')));
  }catch{return false;}
