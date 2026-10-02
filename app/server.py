@@ -38,17 +38,19 @@ def library(s=None):
    seen.add(str(f.resolve()));key=asset_id(f);name=f.stem.removeprefix('douyin-bubble-').replace('-198x162','')
    for term,label in NAMES.items():
     if name.startswith(term):name=name.replace(term,label);break
-   config=s['presets'].get(key,defaults(w,h))
+   config={**defaults(w,h),**s['presets'].get(key,{})}
    items.append({'id':key,'name':name,'filename':f.name,'width':w,'height':h,'bytes':size,'douyinSize':w<=198 and h<=162 and size<=2*1024*1024,'favorite':key in s['favorites'],'config':config,'url':'/asset/'+key,'path':str(f.resolve())})
  return items
-def defaults(w,h):return {'left':round(w*.35),'right':round(w*.73),'top':round(h*.45),'bottom':round(h*.55),'scale':.6,'color':'#44362f','padding':[29,37,36,48],'width':w,'height':h}
+def defaults(w,h):return {'left':round(w*.35),'right':round(w*.73),'top':round(h*.45),'bottom':round(h*.55),'scale':round(max(.01,min(.6,240/w,98/h)),4),'radius':0,'color':'#44362f','padding':[29,37,36,48],'width':w,'height':h}
 def validate(c,w,h):
  import re
  c={**defaults(w,h),**c,'width':w,'height':h}
  for k in ('left','right','top','bottom'):c[k]=int(c[k])
  if not(0<c['left']<c['right']<w and 0<c['top']<c['bottom']<h):raise ValueError('拉伸线不能交叉或超出图片')
  c['scale']=float(c['scale'])
- if not .2<=c['scale']<=2:raise ValueError('比例需在 20%–200% 之间')
+ if not .01<=c['scale']<=2:raise ValueError('比例需在 1%–200% 之间')
+ c['radius']=float(c['radius'])
+ if not 0<=c['radius']<=200:raise ValueError('圆角需在 0–200 像素之间')
  if not re.fullmatch(r'#[0-9a-fA-F]{6}',c['color']):raise ValueError('文字颜色需为六位十六进制颜色')
  if len(c['padding'])!=4 or any(not 0<=float(v)<=200 for v in c['padding']):raise ValueError('文字边距需在 0–200 之间')
  c['padding']=[float(v) for v in c['padding']];return c

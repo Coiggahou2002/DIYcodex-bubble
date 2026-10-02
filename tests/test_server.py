@@ -15,7 +15,7 @@ class StudioTests(unittest.TestCase):
   cls.thread=threading.Thread(target=cls.http.serve_forever,daemon=True);cls.thread.start();cls.base=f'http://127.0.0.1:{server.PORT}'
  @classmethod
  def tearDownClass(cls):cls.http.shutdown();cls.http.server_close();TASK_DATA.cleanup()
- def setUp(self):shutil.rmtree(Path(TASK_DATA.name)/'imports',ignore_errors=True);server.save(json.loads(json.dumps(server.DEFAULT)));self.folder=Path(TASK_DATA.name)/'art';self.folder.mkdir(exist_ok=True);(self.folder/'one.png').write_bytes(png());(self.folder/'two.png').write_bytes(png(160,120))
+ def setUp(self):shutil.rmtree(Path(TASK_DATA.name)/'imports',ignore_errors=True);server.save(json.loads(json.dumps(server.DEFAULT)));self.folder=Path(TASK_DATA.name)/'art';shutil.rmtree(self.folder,ignore_errors=True);self.folder.mkdir();(self.folder/'one.png').write_bytes(png());(self.folder/'two.png').write_bytes(png(160,120))
  def request(self,path,body=None,origin=True):
   headers={'Content-Type':'application/json','X-Bubble-Studio':'1'}
   if origin:headers['Origin']=self.base
@@ -41,6 +41,21 @@ class StudioTests(unittest.TestCase):
   self.assertEqual(err.exception.code,400);self.assertIsNone(server.state()['active'])
   with self.assertRaises(urllib.error.HTTPError) as err:self.request('/api/folder',{'path':str(self.folder)},origin=False)
   self.assertEqual(err.exception.code,403)
+ def test_large_png_defaults_fit_and_small_scale_radius_save(self):
+  self.assertEqual(server.defaults(198,162)['scale'],.6)
+  for w,h in [(420,210),(1000,500),(4096,4096)]:
+   c=server.defaults(w,h)
+   self.assertLessEqual(w*c['scale'],240.1)
+   self.assertLessEqual(h*c['scale'],98.1)
+  (self.folder/'large.png').write_bytes(png(1000,500))
+  a=next(i for i in self.connect() if i['width']==1000)
+  c={**a['config'],'scale':.05,'radius':24}
+  self.request('/api/save',{'id':a['id'],'config':c})
+  saved=next(i for i in self.request('/api/library')['items'] if i['id']==a['id'])
+  self.assertEqual(saved['config']['scale'],.05)
+  self.assertEqual(saved['config']['radius'],24)
+  for bad in ({**c,'scale':.001},{**c,'radius':-1},{**c,'radius':201}):
+   with self.assertRaises(urllib.error.HTTPError):self.request('/api/save',{'id':a['id'],'config':bad})
  def test_asset_route_cannot_read_arbitrary_path(self):
   with self.assertRaises(urllib.error.HTTPError) as err:self.request('/asset/../../app/server.py')
   self.assertEqual(err.exception.code,404)
