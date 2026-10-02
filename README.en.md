@@ -85,7 +85,7 @@ Import the finished PNG here to tune, preview, and apply it. The studio's **Desi
 
 Download a PNG and its `.bubble.json` settings from a work's detail page. Import and select the PNG in the desktop studio, then **Import settings** to retain its stretch guides and text placement. Preview before applying.
 
-**Preview your PNG** processes an existing image in your browser only. It does not upload or publish it, and there is no AI image generation. Public works are manually reviewed and published by the maintainer. Open “Contribute a bubble” in the online gallery; anonymous intake is being connected, and the form clearly shows when submissions are not yet enabled.
+**Preview your PNG** processes an existing image in your browser only. It does not upload or publish it, and there is no AI image generation. Public works are manually reviewed and published by the maintainer. Open “Contribute a bubble” in the online gallery, enter a nickname and bubble name, and upload a PNG. It stays in the private review queue until approved.
 
 Public counts come from each PNG's GitHub Releases download statistics. They may be delayed and do not represent unique users. Unavailable counts are shown as unavailable. The local gallery labels its separate, local-only counter.
 

@@ -14,7 +14,7 @@
 
 ## 手动投稿
 
-[打开气泡库，点击「贡献气泡」](https://kaitongg-bit.github.io/DIYcodex-bubble/#contribute)。无需注册，只需昵称、气泡名、PNG 和分享授权。图片先进入私有待审仓库，审核通过后才公开。线上接收服务目前正在接入，表单会明确提示启用状态；「预览自己的 PNG」仍只在浏览器本地预览。
+[打开气泡库，点击「贡献气泡」](https://kaitongg-bit.github.io/DIYcodex-bubble/#contribute)。无需注册，只需昵称、气泡名、PNG 和分享授权。图片先进入私有待审仓库，审核通过后才公开；「预览自己的 PNG」仍只在浏览器本地预览。
 
 作者收到素材后，人工检查：
 
@@ -41,8 +41,8 @@ python3 scripts/export-gallery.py /tmp/bubble-gallery
 
 ## Manual submissions
 
-This version is a static gallery hosted on GitHub Pages. Approved PNGs and their download counts use GitHub Releases. The static gallery needs no paid domain or login. Anonymous intake uses a Cloudflare Worker and a private GitHub review queue; production intake is being connected.
+This version is a static gallery hosted on GitHub Pages. Approved PNGs and their download counts use GitHub Releases. The static gallery needs no paid domain or login. Anonymous intake uses a Cloudflare Worker and a private GitHub review queue.
 
-Preview a PNG locally in your browser; it is never uploaded or automatically published. Open [the gallery’s contribution form](https://kaitongg-bit.github.io/DIYcodex-bubble/#contribute), enter a nickname and bubble name, choose a PNG and confirm sharing rights. The image stays private until reviewed. The form clearly shows when production intake is not yet enabled. Maintainer setup is documented in `community/DEPLOYMENT.md`.
+Preview a PNG locally in your browser; it is never uploaded or automatically published. Open [the gallery’s contribution form](https://kaitongg-bit.github.io/DIYcodex-bubble/#contribute), enter a nickname and bubble name, choose a PNG and confirm sharing rights. The image stays private until reviewed. Maintainer setup is documented in `community/DEPLOYMENT.md`.
 
 The gallery is all-ages. The maintainer reviews safety, rights, readable stretch behavior, and configuration before publishing. Report rights concerns with a text Issue. Removing an entry and its release asset prevents further public access but cannot recall files already downloaded. Download counts are GitHub PNG asset downloads, may be delayed, and are not unique-user counts. No AI generation is provided.

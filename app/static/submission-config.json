@@ -1,1 +1,4 @@
-{"endpoint":"","siteKey":""}
+{
+  "endpoint": "https://diycodex-bubble-submissions.kaitongguan.workers.dev/api/submissions",
+  "siteKey": "0x4AAAAAAFMU6RZ9Yg6TeUtP"
+}
