@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "filename": "fluffy-cat-demo.png",
+  "config": {
+    "left": 103,
+    "right": 107,
+    "top": 81,
+    "bottom": 85,
+    "scale": 0.6,
+    "radius": 0,
+    "borderWidth": 0,
+    "borderColor": "#d0d0d0",
+    "color": "#44362f",
+    "padding": [
+      29,
+      37,
+      36,
+      48
+    ],
+    "width": 198,
+    "height": 162
+  }
+}
