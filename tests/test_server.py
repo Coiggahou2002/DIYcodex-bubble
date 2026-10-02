@@ -15,7 +15,7 @@ class StudioTests(unittest.TestCase):
   cls.thread=threading.Thread(target=cls.http.serve_forever,daemon=True);cls.thread.start();cls.base=f'http://127.0.0.1:{server.PORT}'
  @classmethod
  def tearDownClass(cls):cls.http.shutdown();cls.http.server_close();TASK_DATA.cleanup()
- def setUp(self):shutil.rmtree(Path(TASK_DATA.name)/'imports',ignore_errors=True);server.save(json.loads(json.dumps(server.DEFAULT)));self.folder=Path(TASK_DATA.name)/'art';shutil.rmtree(self.folder,ignore_errors=True);self.folder.mkdir();(self.folder/'one.png').write_bytes(png());(self.folder/'two.png').write_bytes(png(160,120))
+ def setUp(self):shutil.rmtree(Path(TASK_DATA.name)/'imports',ignore_errors=True);shutil.rmtree(Path(TASK_DATA.name)/'builtins',ignore_errors=True);server.save({**json.loads(json.dumps(server.DEFAULT)),'builtinsInitialized':True});self.folder=Path(TASK_DATA.name)/'art';shutil.rmtree(self.folder,ignore_errors=True);self.folder.mkdir();(self.folder/'one.png').write_bytes(png());(self.folder/'two.png').write_bytes(png(160,120))
  def request(self,path,body=None,origin=True,language="zh"):
   headers={'Content-Type':'application/json','X-Bubble-Studio':'1','Accept-Language':language}
   if origin:headers['Origin']=self.base
@@ -99,6 +99,30 @@ class StudioTests(unittest.TestCase):
   Path(entry['stored']).unlink()
   result=self.request('/api/library')
   self.assertEqual(result['trashCount'],0);self.assertIsNone(result['latestTrashId'])
+ def test_builtins_first_run_delete_and_explicit_restore(self):
+  server.save(json.loads(json.dumps(server.DEFAULT)))
+  items=self.request('/api/library')['items'];self.assertEqual(len(items),3)
+  a=next(i for i in items if i['filename']=='alien-cat.png')
+  bundled=server.ROOT/'presets/alien-cat.png';original=bundled.read_bytes()
+  config={**a['config'],'radius':8}
+  self.request('/api/save',{'id':a['id'],'config':config})
+  self.request('/api/delete',{'id':a['id']})
+  self.assertEqual(len(self.request('/api/library')['items']),2)
+  self.assertEqual(bundled.read_bytes(),original)
+  self.assertEqual(self.request('/api/restore-builtins',{})['added'],1)
+  restored=next(i for i in self.request('/api/library')['items'] if i['id']==a['id'])
+  self.assertEqual(restored['config']['radius'],8)
+  self.assertEqual(self.request('/api/restore-builtins',{})['added'],0)
+ def test_gallery_is_curated_and_download_count_is_real(self):
+  self.connect();gallery=self.request('/api/gallery')
+  self.assertEqual(len(gallery['items']),3);self.assertEqual(gallery['scope'],'local')
+  self.assertNotIn(TASK_DATA.name,json.dumps(gallery));self.assertNotIn('one.png',json.dumps(gallery))
+  before=next(i for i in gallery['items'] if i['id']=='love')['downloads']
+  result=self.request('/api/gallery-download',{'id':'love'})
+  self.assertEqual(result['downloads'],before+1)
+  self.assertEqual(base64.b64decode(result['data']),(server.ROOT/'presets/love.png').read_bytes())
+  self.assertEqual(next(i for i in self.request('/api/gallery')['items'] if i['id']=='love')['downloads'],before+1)
+  with self.assertRaises(urllib.error.HTTPError):self.request('/api/gallery-download',{'id':'../server.py'})
  def test_asset_route_cannot_read_arbitrary_path(self):
   with self.assertRaises(urllib.error.HTTPError) as err:self.request('/asset/../../app/server.py')
   self.assertEqual(err.exception.code,404)

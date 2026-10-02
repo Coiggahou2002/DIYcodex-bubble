@@ -41,3 +41,11 @@ node --check app/static/app.js
 ```
 
 更多验证记录见 [VALIDATION.md](VALIDATION.md)。截图必须使用隔离演示数据，不包含用户私人素材、路径或聊天。
+
+## 静态作品库与模拟聊天
+
+`codex-preview.mjs` 与 `codex-preview.css` 提供独立 DOM 模拟器，共用九切片绘制。仅模拟用户消息加背景，助手内容保持普通样式，不调用真实账号、聊天或模型。
+
+`presets/manifest.json` 管理已获分发授权的内置 PNG 与配置。首次读取本机库将它们复制到私有数据目录，不覆盖用户设置；删除后不会自行重建，显式恢复才补回。
+
+`python3 scripts/export-gallery.py /tmp/bubble-gallery` 导出零后端站点。本机 `/gallery` 使用本机下载计数；静态页面从公开 GitHub Releases API 读取全站 PNG 下载统计。PNG 的私有预览使用浏览器 Blob URL，无上传。社区收录规则见 COMMUNITY.md。

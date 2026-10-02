@@ -9,7 +9,7 @@ DATA.mkdir(parents=True,exist_ok=True)
 STATE=DATA/'state.json'
 LOCK=threading.RLock()
 STOP=threading.Event()
-DEFAULT={'folders':[],'presets':{},'favorites':[],'active':None,'debugPort':19327,'trash':[]}
+DEFAULT={'folders':[],'presets':{},'favorites':[],'active':None,'debugPort':19327,'trash':[],'galleryDownloads':{}}
 STATUS={'connected':False,'matched':0}
 PORT=19329
 NAMES={'cat-big-paw-scruffy':'毛茸茸猫咪 · 大爪子','cat-big-paw-doodle':'涂鸦猫咪 · 大爪子','chef-cat-wok-doodle':'猫咪主厨','onigiri-cat-doodle':'饭团猫咪','guangdong-stool':'广东小板凳','rippled-glass-nine-slice':'水波玻璃','mondrian-painting':'蒙德里安画框','mondrian':'蒙德里安','colorful-happy-doodle':'彩色快乐涂鸦','happy-stickman':'快乐小人','love-square-charcoal':'LOVE 方形炭笔','love-charcoal':'LOVE 炭笔'}
@@ -37,9 +37,27 @@ def png_info(path):
  if not(2<=w<=4096 and 2<=h<=4096):raise ValueError('图片尺寸需在 2–4096 像素内')
  return w,h,len(b)
 def asset_id(path):return hashlib.sha256(str(path.resolve()).encode()).hexdigest()[:20]
+def bundled_presets():
+ manifest=json.loads((ROOT/'presets/manifest.json').read_text())
+ result=[]
+ for entry in manifest['items']:
+  path=ROOT/'presets'/entry['filename']
+  if path.resolve().parent!=(ROOT/'presets').resolve():raise ValueError('无效预设文件')
+  w,h,size=png_info(path)
+  result.append({**entry,'width':w,'height':h,'bytes':size,'config':validate(entry['config'],w,h),'path':str(path.resolve()),'url':'/preset/'+entry['id']})
+ return result
+def seed_presets(s,restore=False):
+ if s.get('builtinsInitialized') and not restore:return 0
+ folder=DATA/'builtins';folder.mkdir(exist_ok=True);added=0
+ for item in bundled_presets():
+  destination=folder/item['filename']
+  if not destination.exists():shutil.copy2(item['path'],destination);added+=1
+  key=asset_id(destination);s['presets'].setdefault(key,item['config'])
+  if not s.get('preferredId') and item['id']=='alien-cat':s['preferredId']=key
+ s['builtinsInitialized']=True;save(s);return added
 def library(s=None):
  s=s or state();items=[];seen=set()
- for folder in s['folders']+[str(DATA/'imports')]:
+ for folder in s['folders']+[str(DATA/'imports'),str(DATA/'builtins')]:
   p=Path(folder)
   if not p.is_dir():continue
   for f in sorted(p.glob('*.png')):
@@ -49,8 +67,9 @@ def library(s=None):
    seen.add(str(f.resolve()));key=asset_id(f);name=f.stem.removeprefix('douyin-bubble-').replace('-198x162','')
    for term,label in NAMES.items():
     if name.startswith(term):name=name.replace(term,label);break
+   if f.parent==DATA/'builtins':name=next((x['name'] for x in bundled_presets() if x['filename']==f.name),name)
    config={**defaults(w,h),**s['presets'].get(key,{})}
-   items.append({'id':key,'name':name,'filename':f.name,'width':w,'height':h,'bytes':size,'douyinSize':w<=198 and h<=162 and size<=2*1024*1024,'favorite':key in s['favorites'],'config':config,'url':'/asset/'+key,'path':str(f.resolve())})
+   items.append({'id':key,'name':name,'filename':f.name,'width':w,'height':h,'bytes':size,'douyinSize':w<=198 and h<=162 and size<=2*1024*1024,'favorite':key in s['favorites'],'config':config,'url':'/asset/'+key,'builtin':f.parent==DATA/'builtins','path':str(f.resolve())})
  return items
 def defaults(w,h):return {'left':round(w*.35),'right':round(w*.73),'top':round(h*.45),'bottom':round(h*.55),'scale':round(max(.01,min(.6,240/w,98/h)),4),'radius':0,'borderWidth':0,'borderColor':'#d0d0d0','color':'#44362f','padding':[29,37,36,48],'width':w,'height':h}
 def validate(c,w,h):
@@ -91,9 +110,17 @@ class Handler(BaseHTTPRequestHandler):
  def do_GET(self):
   path=self.path.split('?')[0]
   if path=='/api/library':
-   with LOCK:s=clean_trash(state());items=library(s)
+   with LOCK:s=clean_trash(state());seed_presets(s);items=library(s)
    for item in items:item.pop('path')
    return self.send({'items':items,'folders':s['folders'],'activeId':s['active']['id'] if s['active'] else None,'preferredId':s.get('preferredId'),'trashCount':len(s.get('trash',[])),'latestTrashId':s['trash'][-1]['token'] if s.get('trash') else None,'status':STATUS})
+  if path=='/api/gallery':
+   s=state();items=bundled_presets()
+   for item in items:item.pop('path');item['downloads']=s.get('galleryDownloads',{}).get(item['id'],0)
+   return self.send({'items':items,'scope':'local','moderationAvailable':False})
+  if path.startswith('/preset/'):
+   item=next((x for x in bundled_presets() if x['id']==path[8:]),None)
+   if not item:return self.send({'error':'素材不存在'},404)
+   return self.send(Path(item['path']).read_bytes(),kind='image/png')
   if path=='/api/status':return self.send({**STATUS,'activeId':state()['active']['id'] if state()['active'] else None})
   if path.startswith('/asset/'):
    item=next((x for x in library() if x['id']==path[7:]),None)
@@ -102,7 +129,7 @@ class Handler(BaseHTTPRequestHandler):
   if path=='/api/design-prompt':return self.send({'prompt':'使用 $douyin-chat-bubble skill 设计一款原创抖音聊天气泡。先确定四边直线锚区和点九拉伸线，保证镜像可读与文字空间；导出到我的素材库，完成尺寸、边距、四边锚点与长短消息预检，再在气泡工坊里选择并应用。'})
   if path=='/api/export':
    s=state();return self.send({'version':1,'active':None if not s['active'] else {'filename':Path(s['active']['path']).name,'config':s['active']['config']}})
-  files={'/':'index.html','/index.html':'index.html','/app.css':'app.css','/app.js':'app.js','/nine-slice.mjs':'nine-slice.mjs','/i18n.mjs':'i18n.mjs'}
+  files={'/':'index.html','/index.html':'index.html','/app.css':'app.css','/app.js':'app.js','/nine-slice.mjs':'nine-slice.mjs','/i18n.mjs':'i18n.mjs','/codex-preview.mjs':'codex-preview.mjs','/codex-preview.css':'codex-preview.css','/gallery':'gallery.html','/gallery.html':'gallery.html','/gallery.js':'gallery.js','/gallery.css':'gallery.css'}
   if path not in files:return self.send({'error':'不存在'},404)
   f=ROOT/'app/static'/files[path];kind={'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','mjs':'text/javascript; charset=utf-8','css':'text/css; charset=utf-8'}[f.suffix[1:]];return self.send(f.read_bytes(),kind=kind)
  def do_POST(self):
@@ -118,6 +145,14 @@ class Handler(BaseHTTPRequestHandler):
     body={'path':selected}
    with LOCK:
     s=state()
+    if self.path=='/api/restore-builtins':
+     added=seed_presets(s,restore=True);return self.send({'ok':True,'added':added})
+    if self.path=='/api/gallery-download':
+     item=next((x for x in bundled_presets() if x['id']==body.get('id')),None)
+     if not item:raise ValueError('素材不存在')
+     data=base64.b64encode(Path(item['path']).read_bytes()).decode()
+     counts=s.setdefault('galleryDownloads',{});counts[item['id']]=counts.get(item['id'],0)+1;save(s)
+     return self.send({'ok':True,'filename':item['filename'],'data':data,'config':item['config'],'downloads':counts[item['id']]})
     if self.path in ('/api/folder','/api/choose-folder'):
      p=Path(body['path']).expanduser().resolve()
      if not p.is_dir():raise ValueError('文件夹不存在')
