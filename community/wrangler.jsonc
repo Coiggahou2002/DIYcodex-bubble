@@ -1,0 +1,9 @@
+{
+  "name": "diycodex-bubble-submissions",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "vars": {
+    "QUEUE_REPO": "kaitongg-bit/DIYcodex-bubble-submissions",
+    "ALLOWED_ORIGIN": "https://kaitongg-bit.github.io"
+  }
+}

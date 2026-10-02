@@ -57,3 +57,8 @@ node --check app/static/app.js
 私有状态的 `platforms.codex.active` / `platforms.doubao.active` 保存各自应用快照；旧顶层 active 迁移到 Codex。顶层 active/debugPort 为当前选择平台的兼容视图，保存时同步相应快照。原图预设、收藏、素材库继续共享。后台各平台监控只使用对应快照；API 拒绝带有过期平台标记的写操作。
 
 补充桥测试：`node --test tests/bridge.test.mjs`。实机启动不得强制关闭任何应用；旧独立工坊必须避免同时监控。
+
+
+## Anonymous submission intake
+
+See [community/DEPLOYMENT.md](community/DEPLOYMENT.md) for Worker secrets, Turnstile, private queue, owner-only moderation and the verified local acceptance boundary. Regression tests: `node --test tests/submissions.test.mjs`.

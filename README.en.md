@@ -12,11 +12,15 @@ Supports **Codex and Doubao desktop apps**. Only **your messages** get a bubble.
 
 An independent appearance tool. **Not an official OpenAI or Codex product.** It does not modify the official app installation.
 
-[Online bubble gallery](https://kaitongg-bit.github.io/DIYcodex-bubble/) · [Contribute a bubble](COMMUNITY.md#manual-submissions) · [Download the latest release](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [Create your own bubble](#want-to-create-your-own-bubble) · [Usage responsibility](#license-and-responsibility)
+[Bubble gallery / Contribute](https://kaitongg-bit.github.io/DIYcodex-bubble/) · [Download the latest release](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [Create your own bubble](#want-to-create-your-own-bubble) · [Usage responsibility](#license-and-responsibility)
 
 ![Alien-cat bubbles in the Codex-inspired chat simulator](docs/images/chat-simulation.png)
 
 *Try the artwork with short and long messages. This is an independent simulation, not a real Codex screenshot.*
+
+![Custom user bubbles in the Doubao desktop app](docs/images/doubao-chat.png)
+
+Real Doubao chat: your messages get a custom bubble while assistant replies keep their original appearance.
 
 ![Light-mode Bubble Studio with an alien-cat preview and LOVE and cooking-cat assets in the library](docs/images/studio-overview-en.jpg)
 
@@ -81,7 +85,7 @@ Import the finished PNG here to tune, preview, and apply it. The studio's **Desi
 
 Download a PNG and its `.bubble.json` settings from a work's detail page. Import and select the PNG in the desktop studio, then **Import settings** to retain its stretch guides and text placement. Preview before applying.
 
-**Preview your PNG** processes an existing image in your browser only. It does not upload or publish it, and there is no AI image generation. Public works are manually reviewed and published by the maintainer; this version has no login or moderation dashboard. See [manual submissions](COMMUNITY.md#manual-submissions).
+**Preview your PNG** processes an existing image in your browser only. It does not upload or publish it, and there is no AI image generation. Public works are manually reviewed and published by the maintainer. Open “Contribute a bubble” in the online gallery; anonymous intake is being connected, and the form clearly shows when submissions are not yet enabled.
 
 Public counts come from each PNG's GitHub Releases download statistics. They may be delayed and do not represent unique users. Unavailable counts are shown as unavailable. The local gallery labels its separate, local-only counter.
 

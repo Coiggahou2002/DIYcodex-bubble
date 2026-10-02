@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "fluffy-cat-demo",
+      "community": true,
+      "name": "毛茸茸猫咪 · 投稿演示",
+      "nameEn": "Fluffy cat · submission demo",
+      "filename": "fluffy-cat-demo.png",
+      "author": "kaitongg · demo-visitor (test)",
+      "license": "Non-commercial only",
+      "config": {
+        "left": 103,
+        "right": 107,
+        "top": 81,
+        "bottom": 85,
+        "scale": 0.6,
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0",
+        "color": "#44362f",
+        "padding": [
+          29,
+          37,
+          36,
+          48
+        ],
+        "width": 198,
+        "height": 162
+      },
+      "description": {
+        "zh": "作者自有作品，以虚构测试昵称演示投稿、审核和发布。",
+        "en": "An original kaitongg design submitted under a fictional demo nickname to verify the review workflow."
+      },
+      "downloadUrl": "https://github.com/kaitongg-bit/DIYcodex-bubble/releases/download/presets-v1/fluffy-cat-demo.png",
+      "downloadStatsUrl": "https://api.github.com/repos/kaitongg-bit/DIYcodex-bubble/releases/tags/presets-v1"
+    }
+  ]
+}

@@ -12,11 +12,15 @@
 
 非 OpenAI / Codex 官方产品。独立的聊天外观工具，不修改官方应用安装包。
 
-[在线气泡库](https://kaitongg-bit.github.io/DIYcodex-bubble/) · [贡献气泡](COMMUNITY.md#手动投稿) · [下载最新版](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [想画新气泡？](#想画一款自己的气泡) · [使用责任](RESPONSIBILITY.md)
+[在线气泡库 / 贡献气泡](https://kaitongg-bit.github.io/DIYcodex-bubble/) · [下载最新版](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [想画新气泡？](#想画一款自己的气泡) · [使用责任](RESPONSIBILITY.md)
 
 ![外星小猫在 Codex 风格的聊天模拟器中](docs/images/chat-simulation.png)
 
 *聊天模拟预览：看看短句、长消息中的气泡效果。独立模拟页面，不是真实 Codex 截图。*
+
+![豆包中的真实聊天气泡效果](docs/images/doubao-chat.png)
+
+豆包实际使用效果：你发出的消息换上气泡，助手回复保持原样。
 
 ![气泡工坊：左边选素材，中间拖动调整，右边预览聊天效果](docs/images/studio-overview.jpg)
 
@@ -81,7 +85,7 @@
 
 作品详情可下载 PNG 和配套 `.bubble.json` 设置。导入 PNG、选中它，再点「导入设置」，即可保留这款作品的拉伸与文字位置；确认效果后再应用。
 
-在线「预览自己的 PNG」只在当前浏览器处理，不上传、不自动投稿，也不接入 AI 生图。公共作品由作者手动审核、收录和发布，目前没有登录或审核后台。投稿方式见 [手动投稿说明](COMMUNITY.md#手动投稿)。
+在线「预览自己的 PNG」只在当前浏览器处理，不上传、不自动投稿，也不接入 AI 生图。公共作品由作者手动审核、收录和发布，无需注册；作品发布前由维护者审核。点击气泡库里的「贡献气泡」打开投稿表单；匿名接收服务正在接入，正式启用前页面会明确提示。
 
 作品下载次数读取 GitHub Releases 的 PNG 下载统计，可能延迟，并非独立用户数；接口不可用时显示「暂未统计」。本机作品库另显示本机统计，不冒充全站数据。
 
