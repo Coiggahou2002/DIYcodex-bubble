@@ -19,6 +19,16 @@ def state():
 def save(s):
  with LOCK:
   tmp=DATA/'state.tmp';tmp.write_text(json.dumps(s,ensure_ascii=False,indent=2));tmp.replace(STATE)
+def clean_trash(s):
+ remaining=[entry for entry in s.get('trash',[]) if Path(entry['stored']).is_file()]
+ if remaining!=s.get('trash',[]):s['trash']=remaining;save(s)
+ return s
+def choose_folder():
+ if sys.platform!='darwin':raise ValueError('目前仅支持 macOS 文件夹选择')
+ script='try\nreturn POSIX path of (choose folder with prompt "选择气泡素材文件夹")\non error number -128\nreturn ""\nend try'
+ result=subprocess.run(['/usr/bin/osascript','-e',script],capture_output=True,text=True)
+ if result.returncode:raise ValueError('无法打开文件夹选择窗口，请重试')
+ return result.stdout.strip()
 def png_info(path):
  b=path.read_bytes()
  if len(b)<33 or b[:8]!=b'\x89PNG\r\n\x1a\n' or b[12:16]!=b'IHDR':raise ValueError('不是有效的 PNG')
@@ -80,7 +90,7 @@ class Handler(BaseHTTPRequestHandler):
  def do_GET(self):
   path=self.path.split('?')[0]
   if path=='/api/library':
-   s=state();items=library(s)
+   with LOCK:s=clean_trash(state());items=library(s)
    for item in items:item.pop('path')
    return self.send({'items':items,'folders':s['folders'],'activeId':s['active']['id'] if s['active'] else None,'preferredId':s.get('preferredId'),'trashCount':len(s.get('trash',[])),'latestTrashId':s['trash'][-1]['token'] if s.get('trash') else None,'status':STATUS})
   if path=='/api/status':return self.send({**STATUS,'activeId':state()['active']['id'] if state()['active'] else None})
@@ -101,13 +111,22 @@ class Handler(BaseHTTPRequestHandler):
    length=int(self.headers.get('Content-Length','0'))
    if length>4*1024*1024:raise ValueError('请求过大')
    body=json.loads(self.rfile.read(length))
+   if self.path=='/api/choose-folder':
+    selected=choose_folder()
+    if not selected:return self.send({'ok':True,'cancelled':True})
+    body={'path':selected}
    with LOCK:
     s=state()
-    if self.path=='/api/folder':
+    if self.path in ('/api/folder','/api/choose-folder'):
      p=Path(body['path']).expanduser().resolve()
      if not p.is_dir():raise ValueError('文件夹不存在')
      if str(p) not in s['folders']:s['folders'].append(str(p))
      save(s);return self.send({'ok':True})
+    if self.path=='/api/open-trash':
+     if sys.platform!='darwin':raise ValueError('目前仅支持 macOS')
+     trash=DATA/'trash';trash.mkdir(exist_ok=True)
+     subprocess.run(['/usr/bin/open',str(trash.resolve())],check=True,capture_output=True)
+     return self.send({'ok':True})
     if self.path=='/api/import':
      data=base64.b64decode(body['data'],validate=True)
      if len(data)>2*1024*1024:raise ValueError('PNG 不得超过 2 MB')
@@ -121,7 +140,7 @@ class Handler(BaseHTTPRequestHandler):
      item=next((x for x in library(s) if x['id']==body['id']),None)
      if not item:raise ValueError('素材不存在')
      source=Path(item['path']);token=uuid.uuid4().hex
-     trash=DATA/'trash';trash.mkdir(exist_ok=True);destination=trash/(token+'.png')
+     trash=DATA/'trash';trash.mkdir(exist_ok=True);destination=trash/(token[:8]+'-'+source.name)
      shutil.move(str(source),str(destination))
      entry={'token':token,'id':item['id'],'original':str(source),'stored':str(destination)}
      s.setdefault('trash',[]).append(entry)
@@ -164,7 +183,7 @@ class Handler(BaseHTTPRequestHandler):
     else:raise ValueError('未知操作')
    if self.path in ('/api/apply','/api/restore'):STATUS=bridge('restore' if self.path=='/api/restore' else 'apply')
    return self.send({'ok':True,'status':STATUS})
-  except (ValueError,KeyError,TypeError,OSError) as e:self.send({'error':str(e)},400)
+  except (ValueError,KeyError,TypeError,OSError,subprocess.SubprocessError) as e:self.send({'error':str(e)},400)
 def main():
  global PORT
  parser=argparse.ArgumentParser();parser.add_argument('--port',type=int,default=19329);args=parser.parse_args();PORT=args.port

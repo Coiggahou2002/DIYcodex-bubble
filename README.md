@@ -79,3 +79,11 @@ node --check app/static/app.js
 MIT License。运行时注入思路参考 [codex-candy-jelly-skin](https://github.com/suki052/codex-candy-jelly-skin)；气泡设计流程使用单独维护的 [douyinQIPAO](https://github.com/kaitongg-bit/douyinQIPAO)。本项目不打包其源文件。
 
 用户素材权利属于各自权利人，不随代码许可证转授。
+
+### 素材文件夹与回收区
+
+点击「连接素材文件夹」后，在 macOS 文件夹选择窗口中选中你的素材目录（例如设计输出的 outputs 文件夹），无需粘贴路径。取消选择不会更改素材库。
+
+删除气泡会把 PNG 移入本工具的回收文件夹，保留文件名和调节记录，可以点击「撤销删除」恢复。连接目录中的原文件也会被移入回收区。
+
+需要彻底删除时，点击「打开回收文件夹」，在 Finder 中把不需要的 PNG 移入系统废纸篓，再自行清空系统废纸篓。清空后文件无法恢复。返回工坊点击「刷新素材库」，可撤销记录会同步更新。本工具不会自动清空系统废纸篓。
