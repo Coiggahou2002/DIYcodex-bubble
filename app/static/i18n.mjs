@@ -188,6 +188,7 @@ export const english = {
   "给聊天一点自己的风格。": "Give your chat some personality.",
   "选一款气泡，放进 Codex 模拟页面里试试。": "Choose a bubble and try it in a Codex-style window.",
   "预览自己的 PNG ↗": "Preview your own PNG ↗",
+  "我要制作 ↗": "Create a bubble ↗",
   "本机社区原型": "Local community preview",
   "当前展示内置作品与本机下载次数；公开作品库另由作者手动审核发布。": "Built-in designs with local download counts. The public gallery is reviewed and published manually.",
   "作者 kaitongg · 仅限非商业使用": "By kaitongg · Non-commercial only",

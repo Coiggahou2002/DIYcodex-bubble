@@ -107,6 +107,16 @@ def bridge(action,platform="codex"):
   result=subprocess.run([node_path(),str(ROOT/'app/bridge.mjs'),str(STATE),action,platform],capture_output=True,text=True,timeout=12)
   return json.loads(result.stdout) if result.returncode==0 else {'connected':False,'matched':0,'message':'应用连接失败'}
  except Exception:return {'connected':False,'matched':0,'message':'应用连接暂不可用'}
+def review_cli(*args):
+ result=subprocess.run([sys.executable,str(ROOT/'scripts/review-submissions.py'),*args],capture_output=True,text=True,timeout=30)
+ if result.returncode:raise ValueError((result.stderr or result.stdout or '审核服务失败').strip())
+ return json.loads(result.stdout) if result.stdout.strip() else {}
+def review_image(sid):
+ import re
+ if not re.fullmatch(r'[a-f0-9-]{36}',sid):raise ValueError('Invalid submission ID')
+ result=subprocess.run(['gh','api',f'repos/kaitongg-bit/DIYcodex-bubble-submissions/contents/pending/{sid}/bubble.png'],capture_output=True,text=True,timeout=30)
+ if result.returncode:raise ValueError('找不到待审图片')
+ return base64.b64decode(json.loads(result.stdout)['content'])
 def watch(platform):
  while not STOP.wait(3):
   s=state();active=s['platforms'][platform].get('active')
@@ -137,9 +147,14 @@ class Handler(BaseHTTPRequestHandler):
    if not item:return self.send({'error':'素材不存在'},404)
    return self.send(Path(item['path']).read_bytes(),kind='image/png')
   if path=='/api/design-prompt':return self.send({'prompt':'使用 $douyin-chat-bubble skill 设计一款原创抖音聊天气泡。先确定四边直线锚区和点九拉伸线，保证镜像可读与文字空间；导出到我的素材库，完成尺寸、边距、四边锚点与长短消息预检，再在气泡工坊里选择并应用。'})
+  if path=='/api/review/list':return self.send(review_cli('list'))
+  if path.startswith('/api/review/image'):
+   from urllib.parse import parse_qs,urlparse
+   sid=parse_qs(urlparse(self.path).query).get('id',[''])[0]
+   return self.send(review_image(sid),kind='image/png')
   if path=='/api/export':
    s=state();return self.send({'version':1,'active':None if not s['active'] else {'filename':Path(s['active']['path']).name,'config':s['active']['config']}})
-  files={'/':'index.html','/index.html':'index.html','/app.css':'app.css','/app.js':'app.js','/nine-slice.mjs':'nine-slice.mjs','/i18n.mjs':'i18n.mjs','/codex-preview.mjs':'codex-preview.mjs','/codex-preview.css':'codex-preview.css','/gallery':'gallery.html','/gallery.html':'gallery.html','/gallery.js':'gallery.js','/gallery.css':'gallery.css'}
+  files={'/':'index.html','/index.html':'index.html','/app.css':'app.css','/app.js':'app.js','/nine-slice.mjs':'nine-slice.mjs','/editor-core.mjs':'editor-core.mjs','/i18n.mjs':'i18n.mjs','/codex-preview.mjs':'codex-preview.mjs','/codex-preview.css':'codex-preview.css','/gallery':'gallery.html','/gallery.html':'gallery.html','/gallery.js':'gallery.js','/gallery.css':'gallery.css','/review':'review.html','/review.html':'review.html','/review.js':'review.js','/review.css':'review.css','/workshop':'workshop.html','/workshop.html':'workshop.html','/workshop.js':'workshop.js','/workshop.css':'workshop.css'}
   if path not in files:return self.send({'error':'不存在'},404)
   f=ROOT/'app/static'/files[path];kind={'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','mjs':'text/javascript; charset=utf-8','css':'text/css; charset=utf-8'}[f.suffix[1:]];return self.send(f.read_bytes(),kind=kind)
  def do_POST(self):
@@ -159,6 +174,10 @@ class Handler(BaseHTTPRequestHandler):
      if key not in PLATFORMS:raise ValueError('不支持的平台')
      s['platform']=key;s['active']=s['platforms'][key].get('active');s['debugPort']=s['platforms'][key]['debugPort'];save(s)
      return self.send({'ok':True,'platform':key,'status':status_for(s)})
+    if self.path=='/api/review/decision':
+     sid=str(body.get('id',''));action=body.get('action');reason=str(body.get('reason',''))[:500]
+     if action not in ('approve','reject'):raise ValueError('审核动作无效')
+     return self.send(review_cli(action,sid,'--reason',reason))
     if body.get('platform',s['platform'])!=s['platform']:raise ValueError('平台已切换，请刷新后重试')
     if self.path=='/api/restore-builtins':
      added=seed_presets(s,restore=True);return self.send({'ok':True,'added':added})

@@ -9,8 +9,18 @@ export async function validateSubmission(request){
  const file=form.get('png');if(!file||typeof file.arrayBuffer!=='function'||file.size>LIMIT)throw Error('Choose a PNG smaller than 2 MB');
  const bytes=new Uint8Array(await file.arrayBuffer());if(bytes.length<33||bytes.slice(0,8).join(',')!=='137,80,78,71,13,10,26,10'||String.fromCharCode(...bytes.slice(12,16))!=='IHDR')throw Error('Invalid PNG');
  const view=new DataView(bytes.buffer);const width=view.getUint32(16),height=view.getUint32(20);if(width<2||height<2||width>4096||height>4096)throw Error('PNG dimensions must be 2–4096 pixels');
+ let config=null;
+ if(form.has('config')){
+  const raw=String(form.get('config')||'');
+  if(raw.length>4096)throw Error('Bubble settings are too large');
+  try{config=JSON.parse(raw);}catch{throw Error('Invalid bubble settings');}
+  const integer=(key,max)=>Number.isInteger(config?.[key])&&config[key]>0&&config[key]<max;
+  if(!integer('left',width)||!integer('right',width)||config.left>=config.right||!integer('top',height)||!integer('bottom',height)||config.top>=config.bottom)throw Error('Invalid stretch guides');
+  if(config.width!==width||config.height!==height||!Number.isFinite(config.scale)||config.scale<.01||config.scale>2||!Array.isArray(config.padding)||config.padding.length!==4||config.padding.some(n=>!Number.isFinite(n)||n<0||n>200)||!/^#[0-9a-f]{6}$/i.test(config.color)||!Number.isFinite(config.radius)||config.radius<0||config.radius>200||!Number.isFinite(config.borderWidth)||config.borderWidth<0||config.borderWidth>20||!/^#[0-9a-f]{6}$/i.test(config.borderColor))throw Error('Invalid bubble settings');
+  config={width,height,left:config.left,right:config.right,top:config.top,bottom:config.bottom,scale:config.scale,padding:config.padding,color:config.color,radius:config.radius,borderWidth:config.borderWidth,borderColor:config.borderColor};
+ }
  const sha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
- return {bytes,metadata:{nickname,name,width,height,sha256,consent:'Non-commercial gallery display and downloads; submitter confirms rights',createdAt:new Date().toISOString(),status:'pending'}};
+ return {bytes,metadata:{nickname,name,width,height,sha256,config,consent:'Non-commercial gallery display and downloads; submitter confirms rights',createdAt:new Date().toISOString(),status:'pending'}};
 }
 function base64(bytes){let s='';for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(s);}
 export async function storeSubmission(data,env,fetcher=fetch){

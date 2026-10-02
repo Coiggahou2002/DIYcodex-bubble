@@ -85,7 +85,9 @@ Import the finished PNG here to tune, preview, and apply it. The studio's **Desi
 
 Download a PNG and its `.bubble.json` settings from a work's detail page. Import and select the PNG in the desktop studio, then **Import settings** to retain its stretch guides and text placement. Preview before applying.
 
-**Preview your PNG** processes an existing image in your browser only. It does not upload or publish it, and there is no AI image generation. Public works are manually reviewed and published by the maintainer. Open “Contribute a bubble” in the online gallery, enter a nickname and bubble name, and upload a PNG. It stays in the private review queue until approved.
+In the [online workshop](https://kaitongg-bit.github.io/DIYcodex-bubble/workshop.html), choose **Create a bubble** and upload a PNG. A full Codex simulation appears above the editor, which shares the desktop studio's stretch, text-position and rendering logic. **Save settings** lets you download the original PNG and `.bubble.json`, then copy instructions for a new Codex chat. Attach both files there so Codex can import them into your local studio and apply the result. Until you choose **Publish my bubble**, the image stays in your browser; there is no AI image generation.
+
+To share it, choose **Publish my bubble** and enter a nickname and bubble name. The PNG and its current settings enter a private review queue together. The maintainer publishes approved works manually; no account is required.
 
 Public counts come from each PNG's GitHub Releases download statistics. They may be delayed and do not represent unique users. Unavailable counts are shown as unavailable. The local gallery labels its separate, local-only counter.
 

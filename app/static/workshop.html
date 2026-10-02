@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>气泡工坊 · DIY Codex Bubble</title>
+  <link rel="stylesheet" href="./workshop.css">
+  <link rel="stylesheet" href="./codex-preview.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="gallery.html">◒ <strong>DIY Codex Bubble</strong></a>
+    <nav><a href="gallery.html" data-i18n="library">在线气泡库</a><span data-i18n="workshop">气泡工坊</span></nav>
+    <button id="language" class="language-button">EN</button>
+  </header>
+  <main>
+    <section id="start" class="start">
+      <span class="eyebrow">BUBBLE WORKSHOP</span>
+      <h1 data-i18n="startTitle">把喜欢的图片，做成聊天气泡。</h1>
+      <p data-i18n="startDescription">上传 PNG，调整拉伸线和文字位置，再看看它在聊天里的样子。</p>
+      <button id="create" class="primary" data-i18n="create">我要制作</button>
+      <small data-i18n="private">图片只在当前浏览器中编辑，点击发布后才会提交审核。</small>
+    </section>
+    <section id="fullPreview" class="full-preview" hidden><div class="full-preview-head"><div><span class="eyebrow">CODEX PREVIEW</span><h2 data-i18n="desktopTitle">Codex 模拟预览</h2></div><button id="fullTheme" class="soft" data-i18n="dark">深色预览 ☾</button></div><div id="desktopPreview"></div></section>
+    <div id="workspace" class="workspace" hidden>
+      <section class="editor-panel">
+        <div class="panel-head">
+          <div><span class="eyebrow" data-i18n="editEyebrow">编辑气泡</span><h1 id="filename"></h1><p id="filemeta"></p></div>
+          <button id="replace" class="text-button" data-i18n="replace">更换 PNG</button>
+        </div>
+        <div class="canvas-head"><strong data-i18n="edit">编辑气泡</strong><button id="reset" class="text-button" data-i18n="reset">重置</button></div>
+        <div class="art-wrap"><div id="art">
+          <img id="image" draggable="false" alt="">
+          <div id="stretchBand"></div>
+          <div id="textBox" title="拖动文字框，拖动四角调整大小"><span>文!</span><i data-corner="nw"></i><i data-corner="ne"></i><i data-corner="sw"></i><i data-corner="se"></i></div>
+          <div class="guide vertical" data-key="left"><b></b></div><div class="guide vertical" data-key="right"><b></b></div>
+          <div class="guide horizontal" data-key="top"><b></b></div><div class="guide horizontal" data-key="bottom"><b></b></div>
+        </div></div>
+        <div class="controls">
+          <label><span data-i18n="color">文字颜色</span><input id="color" type="color" value="#44362f"></label>
+          <label><span data-i18n="scale">缩放 %</span><input id="scale" type="number" min="1" max="200" step="0.1"></label>
+          <div class="fit-control"><span>&nbsp;</span><button id="fit" data-i18n="fit">适合聊天</button></div>
+          <label><span data-i18n="radius">圆角 px</span><input id="radius" type="number" min="0" max="200" step="1"></label>
+          <label><span data-i18n="border">边框 px</span><input id="borderWidth" type="number" min="0" max="20" step="0.5"></label>
+          <label><span data-i18n="borderColor">边框颜色</span><input id="borderColor" type="color" value="#d0d0d0"></label>
+        </div>
+        <div class="editor-actions"><button id="save" class="soft" data-i18n="save">保存设置</button><button id="importSettings" class="text-button" data-i18n="importSettings">导入设置</button><button id="export" class="text-button" data-i18n="export">导出设置 ↓</button><span id="saveStatus"></span></div>
+      </section>
+      <section class="preview-panel">
+        <div class="panel-head"><h2 data-i18n="preview">聊天预览</h2><button id="theme" class="soft" data-i18n="dark">深色预览 ☾</button></div>
+        <button id="openDesktop" class="desktop-button" data-i18n="desktop">在 Codex 模拟页面里预览 ↗</button>
+        <div class="preview-options"><button data-mode="short" class="on" data-i18n="short">短句</button><button data-mode="long" data-i18n="long">长消息</button><button data-mode="custom" data-i18n="custom">自定义</button></div>
+        <textarea id="customMessage" data-placeholder="customPlaceholder" placeholder="输入你想预览的文字" hidden></textarea>
+        <div id="chat" class="chat">
+          <div class="chat-title"><span class="mini-logo">◒</span> Codex <small data-i18n="preview">聊天预览</small></div>
+          <div class="chat-body"><div class="user-row"><div id="previewBubble" class="preview-bubble"></div></div><div class="sender-time" data-i18n="yourMessage">你的消息 · 刚刚</div><div class="assistant"><span>✦</span><p data-i18n="assistant">气泡只用在你发送的消息上。<br>我的回复保持原来的样子。</p></div><p class="long-note" data-i18n="hint">试试长消息，检查尾巴、爪子和边角。</p></div>
+          <div class="fake-composer"><span data-i18n="composer">发送消息给 Codex</span><span>↑</span></div>
+        </div>
+        <div class="preview-width"><label for="previewWidth" data-i18n="width">预览宽度</label><input id="previewWidth" type="range" min="220" max="520" value="340"><span id="widthValue">340 px</span></div>
+        <div class="publish-area"><button id="publish" class="primary" data-i18n="publish">我要发布 ↗</button><p data-i18n="reviewNote">投稿进入私有待审库，审核通过后才会出现在在线气泡库。</p></div>
+      </section>
+    </div>
+  </main>
+  <dialog id="saveDialog"><div class="dialog-head"><h2 data-i18n="savedTitle">设置已保存</h2><button id="closeSave" type="button" aria-label="关闭">×</button></div><p data-i18n="savedIntro">想在自己的 Codex 聊天里使用？下载 PNG 和设置文件，在 Codex 新聊天中一起上传，再粘贴下面的说明。</p><textarea id="codexInstructions" readonly></textarea><div class="save-actions"><button id="downloadBundle" class="soft" data-i18n="downloadBundle">下载 PNG + 设置</button><button id="copyInstructions" class="primary" data-i18n="copyInstructions">复制给 Codex 的说明</button></div></dialog>
+  <dialog id="publishDialog"><form id="publishForm">
+    <div class="dialog-head"><h2 data-i18n="publishTitle">发布气泡</h2><button id="closePublish" type="button" aria-label="关闭">×</button></div>
+    <p data-i18n="publishIntro">确认作品信息后提交审核。图片和当前设置会一起送到私有待审库。</p>
+    <label><span data-i18n="nickname">你的昵称</span><input name="nickname" maxlength="40" required autocomplete="nickname"></label>
+    <label><span data-i18n="bubbleName">气泡名称</span><input name="name" maxlength="60" required></label>
+    <div class="publish-art"><img id="publishArt" alt=""><span id="publishFilename"></span></div>
+    <label class="consent"><input name="consent" type="checkbox" value="yes" required><span data-i18n="consent">我有权分享此图片，同意审核后展示并提供非商业下载。</span></label>
+    <input name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div id="submissionVerification"></div><p id="submissionStatus" role="status"></p>
+    <button id="sendSubmission" class="primary" type="submit" disabled data-i18n="submit">提交审核</button>
+  </form></dialog>
+  <input id="file" type="file" accept="image/png" hidden><input id="settingsFile" type="file" accept=".json,application/json" hidden>
+  <div id="toast" role="status"></div>
+  <script type="module" src="./workshop.js"></script>
+</body></html>
