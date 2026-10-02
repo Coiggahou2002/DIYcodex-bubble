@@ -10,15 +10,24 @@ STATE=DATA/'state.json'
 LOCK=threading.RLock()
 STOP=threading.Event()
 DEFAULT={'folders':[],'presets':{},'favorites':[],'active':None,'debugPort':19327,'trash':[],'galleryDownloads':{}}
-STATUS={'connected':False,'matched':0}
+PLATFORMS={'codex':{'name':'Codex','debugPort':19327,'apps':['/Applications/ChatGPT.app/Contents/MacOS/ChatGPT','/Applications/Codex.app/Contents/MacOS/Codex']},'doubao':{'name':'豆包','debugPort':19326,'apps':['/Applications/Doubao.app/Contents/MacOS/Doubao']}}
+STATUSES={key:{'connected':False,'matched':0} for key in PLATFORMS}
 PORT=19329
 NAMES={'cat-big-paw-scruffy':'毛茸茸猫咪 · 大爪子','cat-big-paw-doodle':'涂鸦猫咪 · 大爪子','chef-cat-wok-doodle':'猫咪主厨','onigiri-cat-doodle':'饭团猫咪','guangdong-stool':'广东小板凳','rippled-glass-nine-slice':'水波玻璃','mondrian-painting':'蒙德里安画框','mondrian':'蒙德里安','colorful-happy-doodle':'彩色快乐涂鸦','happy-stickman':'快乐小人','love-square-charcoal':'LOVE 方形炭笔','love-charcoal':'LOVE 炭笔'}
 def state():
- try:return {**DEFAULT,**json.loads(STATE.read_text())}
- except (OSError,ValueError):return json.loads(json.dumps(DEFAULT))
+ try:s={**json.loads(json.dumps(DEFAULT)),**json.loads(STATE.read_text())}
+ except (OSError,ValueError):s=json.loads(json.dumps(DEFAULT))
+ if s.get('platform') not in PLATFORMS:s['platform']='codex'
+ if 'platforms' not in s:
+  s['platforms']={'codex':{'active':s.get('active'),'debugPort':s.get('debugPort',19327)}}
+ for key,descriptor in PLATFORMS.items():s['platforms'].setdefault(key,{'active':None,'debugPort':descriptor['debugPort']})
+ profile=s['platforms'][s['platform']];s['active']=profile.get('active');s['debugPort']=profile.get('debugPort',PLATFORMS[s['platform']]['debugPort'])
+ return s
 def save(s):
  with LOCK:
+  if 'platforms' in s:s['platforms'][s.get('platform','codex')]['active']=s.get('active')
   tmp=DATA/'state.tmp';tmp.write_text(json.dumps(s,ensure_ascii=False,indent=2));tmp.replace(STATE)
+def status_for(s):return STATUSES[s['platform']]
 def clean_trash(s):
  remaining=[entry for entry in s.get('trash',[]) if Path(entry['stored']).is_file()]
  if remaining!=s.get('trash',[]):s['trash']=remaining;save(s)
@@ -93,15 +102,15 @@ def node_path():
  fallback=Path.home()/'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node'
  if fallback.exists():return str(fallback)
  raise ValueError('请安装 Node.js 22 或以上版本')
-def bridge(action):
+def bridge(action,platform="codex"):
  try:
-  result=subprocess.run([node_path(),str(ROOT/'app/bridge.mjs'),str(STATE),action],capture_output=True,text=True,timeout=12)
+  result=subprocess.run([node_path(),str(ROOT/'app/bridge.mjs'),str(STATE),action,platform],capture_output=True,text=True,timeout=12)
   return json.loads(result.stdout) if result.returncode==0 else {'connected':False,'matched':0,'message':'应用连接失败'}
  except Exception:return {'connected':False,'matched':0,'message':'应用连接暂不可用'}
-def watch():
- global STATUS
+def watch(platform):
  while not STOP.wait(3):
-  s=state();STATUS=bridge('apply' if s['active'] else 'status')
+  s=state();active=s['platforms'][platform].get('active')
+  STATUSES[platform]=bridge('apply' if active else 'status',platform)
 class Handler(BaseHTTPRequestHandler):
  def log_message(self,*args):pass
  def send(self,data,code=200,kind='application/json'):
@@ -112,7 +121,7 @@ class Handler(BaseHTTPRequestHandler):
   if path=='/api/library':
    with LOCK:s=clean_trash(state());seed_presets(s);items=library(s)
    for item in items:item.pop('path')
-   return self.send({'items':items,'folders':s['folders'],'activeId':s['active']['id'] if s['active'] else None,'preferredId':s.get('preferredId'),'trashCount':len(s.get('trash',[])),'latestTrashId':s['trash'][-1]['token'] if s.get('trash') else None,'status':STATUS})
+   return self.send({'items':items,'folders':s['folders'],'activeId':s['active']['id'] if s['active'] else None,'preferredId':s.get('preferredId'),'trashCount':len(s.get('trash',[])),'latestTrashId':s['trash'][-1]['token'] if s.get('trash') else None,'status':status_for(s),'platform':s['platform']})
   if path=='/api/gallery':
    s=state();items=bundled_presets()
    for item in items:item.pop('path');item['downloads']=s.get('galleryDownloads',{}).get(item['id'],0)
@@ -121,7 +130,8 @@ class Handler(BaseHTTPRequestHandler):
    item=next((x for x in bundled_presets() if x['id']==path[8:]),None)
    if not item:return self.send({'error':'素材不存在'},404)
    return self.send(Path(item['path']).read_bytes(),kind='image/png')
-  if path=='/api/status':return self.send({**STATUS,'activeId':state()['active']['id'] if state()['active'] else None})
+  if path=='/api/status':
+   s=state();return self.send({**status_for(s),'activeId':s['active']['id'] if s['active'] else None,'platform':s['platform']})
   if path.startswith('/asset/'):
    item=next((x for x in library() if x['id']==path[7:]),None)
    if not item:return self.send({'error':'素材不存在'},404)
@@ -133,7 +143,6 @@ class Handler(BaseHTTPRequestHandler):
   if path not in files:return self.send({'error':'不存在'},404)
   f=ROOT/'app/static'/files[path];kind={'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','mjs':'text/javascript; charset=utf-8','css':'text/css; charset=utf-8'}[f.suffix[1:]];return self.send(f.read_bytes(),kind=kind)
  def do_POST(self):
-  global STATUS
   if self.headers.get('Origin')!=f'http://127.0.0.1:{PORT}' or self.headers.get('X-Bubble-Studio')!='1':return self.send({'error':'只允许本机工作台操作'},403)
   try:
    length=int(self.headers.get('Content-Length','0'))
@@ -145,6 +154,12 @@ class Handler(BaseHTTPRequestHandler):
     body={'path':selected}
    with LOCK:
     s=state()
+    if self.path=='/api/platform':
+     key=body.get('platform')
+     if key not in PLATFORMS:raise ValueError('不支持的平台')
+     s['platform']=key;s['active']=s['platforms'][key].get('active');s['debugPort']=s['platforms'][key]['debugPort'];save(s)
+     return self.send({'ok':True,'platform':key,'status':status_for(s)})
+    if body.get('platform',s['platform'])!=s['platform']:raise ValueError('平台已切换，请刷新后重试')
     if self.path=='/api/restore-builtins':
      added=seed_presets(s,restore=True);return self.send({'ok':True,'added':added})
     if self.path=='/api/gallery-download':
@@ -180,11 +195,13 @@ class Handler(BaseHTTPRequestHandler):
      shutil.move(str(source),str(destination))
      entry={'token':token,'id':item['id'],'original':str(source),'stored':str(destination)}
      s.setdefault('trash',[]).append(entry)
-     removed_active=bool(s['active'] and s['active']['id']==item['id'])
-     if removed_active:s['active']=None
+     removed_platforms=[key for key,profile in s['platforms'].items() if profile.get('active') and profile['active']['id']==item['id']]
+     removed_active=bool(removed_platforms)
+     for key in removed_platforms:s['platforms'][key]['active']=None
+     s['active']=s['platforms'][s['platform']].get('active')
      try:save(s)
      except Exception:shutil.move(str(destination),str(source));raise
-     if removed_active:STATUS=bridge('restore')
+     for key in removed_platforms:STATUSES[key]=bridge('restore',key)
      return self.send({'ok':True,'token':token,'activeRemoved':removed_active})
     if self.path=='/api/undo-delete':
      entry=next((x for x in s.get('trash',[]) if x['token']==body['token']),None)
@@ -206,25 +223,27 @@ class Handler(BaseHTTPRequestHandler):
       s['active']={'id':item['id'],'path':item['path'],'config':c,'version':uuid.uuid4().hex}
       # Hand off from the old one-bubble monitor before taking ownership.
       old=ROOT.parent/'codex-cat-bubble'
-      if old.is_dir():(old/'stop-watch').write_text('studio owns appearance')
+      if s['platform']=='codex' and old.is_dir():(old/'stop-watch').write_text('studio owns appearance')
      save(s)
     elif self.path=='/api/restore':s['active']=None;save(s)
     elif self.path=='/api/launch':
      if sys.platform!='darwin':raise ValueError('目前仅支持 macOS')
-     app=next((p for p in [Path('/Applications/ChatGPT.app/Contents/MacOS/ChatGPT'),Path('/Applications/Codex.app/Contents/MacOS/Codex')] if p.exists()),None)
-     if not app:raise ValueError('未找到 ChatGPT 或 Codex 应用')
+     app=next((p for p in [Path(path) for path in PLATFORMS[s['platform']]['apps']] if p.exists()),None)
+     if not app:raise ValueError('未找到豆包桌面应用，请确认已安装 /Applications/Doubao.app' if s['platform']=='doubao' else '未找到 ChatGPT 或 Codex 应用')
      running=subprocess.run(['/usr/bin/pgrep','-f','^'+str(app)],capture_output=True)
-     if running.returncode==0:raise ValueError('请先保存输入并用 ⌘Q 完全退出 ChatGPT/Codex，再点击启动。')
-     log=(DATA/'app-start.log').open('a');subprocess.Popen([str(app),'--remote-debugging-address=127.0.0.1',f'--remote-debugging-port={s["debugPort"]}'],stdout=log,stderr=log,start_new_session=True);return self.send({'ok':True,'message':'正在启动应用，连接后会自动应用已选气泡。'})
+     if running.returncode==0:raise ValueError('请先保存输入并用 ⌘Q 完全退出豆包，再点击启动。' if s['platform']=='doubao' else '请先保存输入并用 ⌘Q 完全退出 ChatGPT/Codex，再点击启动。')
+     with (DATA/'app-start.log').open('a') as log:subprocess.Popen([str(app),'--remote-debugging-address=127.0.0.1',f'--remote-debugging-port={s["debugPort"]}'],stdout=log,stderr=log,start_new_session=True)
+     return self.send({'ok':True,'message':'正在启动应用，连接后会自动应用已选气泡。'})
     else:raise ValueError('未知操作')
-   if self.path in ('/api/apply','/api/restore'):STATUS=bridge('restore' if self.path=='/api/restore' else 'apply')
-   return self.send({'ok':True,'status':STATUS})
+   if self.path in ('/api/apply','/api/restore'):STATUSES[s['platform']]=bridge('restore' if self.path=='/api/restore' else 'apply',s['platform'])
+   return self.send({'ok':True,'status':status_for(s),'platform':s['platform']})
   except (ValueError,KeyError,TypeError,OSError,subprocess.SubprocessError) as e:self.send({'error':str(e)},400)
 def main():
  global PORT
  parser=argparse.ArgumentParser();parser.add_argument('--port',type=int,default=19329);args=parser.parse_args();PORT=args.port
  if not STATE.exists():save(DEFAULT)
- threading.Thread(target=watch,daemon=True).start();print(f'气泡工坊 http://127.0.0.1:{PORT}',flush=True)
+ for platform in PLATFORMS:threading.Thread(target=watch,args=(platform,),daemon=True).start()
+ print(f'气泡工坊 http://127.0.0.1:{PORT}',flush=True)
  try:ThreadingHTTPServer(('127.0.0.1',PORT),Handler).serve_forever()
  finally:STOP.set()
 if __name__=='__main__':main()
