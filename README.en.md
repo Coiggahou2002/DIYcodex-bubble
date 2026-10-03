@@ -45,7 +45,7 @@ Use **EN / 中文** in the top-right corner to switch languages. Bubble settings
 
 <table align="center">
   <tr>
-    <td align="center"><img src="docs/images/chat-simulation.png" alt="Alien-cat bubbles in the Codex-inspired chat simulator" width="420"><br><sub>Codex-inspired simulator: bubble effects with short and long messages (independent simulation, not a real Codex screenshot)</sub></td>
+    <td align="center"><img src="docs/images/chatgpt-chat.png" alt="Custom user bubbles in the ChatGPT desktop app" width="420"><br><sub>Real ChatGPT chat: your messages get a custom bubble while assistant replies keep their original look</sub></td>
     <td align="center"><img src="docs/images/doubao-chat.png" alt="Custom user bubbles in the Doubao desktop app" width="420"><br><sub>Real Doubao chat: your messages get a custom bubble while assistant replies keep their original look</sub></td>
   </tr>
 </table>
@@ -95,6 +95,11 @@ To delete permanently, click **Open recovery folder**, move unwanted files to ma
 ## Gallery and community
 
 [Open the online gallery](https://kaitongg-bit.github.io/DIYcodex-bubble/). Pick a design and try it in a Codex-inspired desktop chat simulator, with light/dark themes and your own sample messages. It never connects to your account or reads real conversations.
+
+<p align="center">
+  <img src="docs/images/chat-simulation.png" alt="Chat simulator in the online gallery" width="420"><br>
+  <sub>The simulator in the online gallery: check bubble effects with short and long messages (independent simulation, not a real Codex screenshot)</sub>
+</p>
 
 **Alien Cat, LOVE, and Cooking Cat** are included on the desktop studio's first launch. Nothing is automatically applied to your chats. Use **Restore built-in presets** to recover deleted presets.
 

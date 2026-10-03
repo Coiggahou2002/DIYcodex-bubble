@@ -45,7 +45,7 @@
 
 <table align="center">
   <tr>
-    <td align="center"><img src="docs/images/chat-simulation.png" alt="外星小猫在 Codex 风格的聊天模拟器中" width="420"><br><sub>Codex 风格聊天模拟器：短句、长消息中的气泡效果（独立模拟，非真实截图）</sub></td>
+    <td align="center"><img src="docs/images/chatgpt-chat.png" alt="ChatGPT 中的真实聊天气泡效果" width="420"><br><sub>ChatGPT 实际使用效果：你发出的消息换上气泡，助手回复保持原样</sub></td>
     <td align="center"><img src="docs/images/doubao-chat.png" alt="豆包中的真实聊天气泡效果" width="420"><br><sub>豆包实际使用效果：你的消息换上气泡，助手回复保持原样</sub></td>
   </tr>
 </table>
@@ -95,6 +95,11 @@
 ## 社区与作品库
 
 [打开在线作品库](https://kaitongg-bit.github.io/DIYcodex-bubble/)：选一款气泡，就能在接近 Codex 桌面布局的聊天模拟器里试效果，支持浅色、深色和输入自己的消息；不连接你的账号，也不读取真实聊天。
+
+<p align="center">
+  <img src="docs/images/chat-simulation.png" alt="在线作品库的聊天模拟器预览" width="420"><br>
+  <sub>在线作品库的聊天模拟器：看看短句、长消息中的气泡效果（独立模拟页面，不是真实 Codex 截图）</sub>
+</p>
 
 首次打开本机工坊，**外星小猫、LOVE、小猫炒菜** 三款预设已经在库里，不会自动应用到聊天；删掉以后想找回，点「恢复内置预设」。
 
