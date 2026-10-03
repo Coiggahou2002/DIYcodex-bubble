@@ -1,0 +1,19 @@
+{
+  "width": 198,
+  "height": 162,
+  "left": 69,
+  "right": 140,
+  "top": 73,
+  "bottom": 89,
+  "scale": 0.6,
+  "padding": [
+    32.4,
+    39.1,
+    32.6,
+    45.9
+  ],
+  "color": "#44362f",
+  "radius": 0,
+  "borderWidth": 0,
+  "borderColor": "#d0d0d0"
+}

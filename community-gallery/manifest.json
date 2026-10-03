@@ -128,6 +128,166 @@
         "zh": "经人工审核收录的社区作品。",
         "en": "A community bubble accepted after manual review."
       }
+    },
+    {
+      "id": "17c658b2-5cb8-4c32-ab50-2f8ad668775a",
+      "community": true,
+      "name": "美人鱼",
+      "nameEn": "美人鱼",
+      "filename": "17c658b2-5cb8-4c32-ab50-2f8ad668775a.png",
+      "author": "一个路人",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 69,
+        "right": 140,
+        "top": 73,
+        "bottom": 89,
+        "scale": 0.6,
+        "padding": [
+          32.4,
+          39.1,
+          32.6,
+          45.9
+        ],
+        "color": "#44362f",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
+    },
+    {
+      "id": "74758fae-be8c-438b-9484-0d13eb513e9e",
+      "community": true,
+      "name": "广东省凳",
+      "nameEn": "广东省凳",
+      "filename": "74758fae-be8c-438b-9484-0d13eb513e9e.png",
+      "author": "一个路人",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 69,
+        "right": 145,
+        "top": 73,
+        "bottom": 89,
+        "scale": 0.6,
+        "padding": [
+          33.8,
+          38.6,
+          31.2,
+          46.4
+        ],
+        "color": "#ffffff",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
+    },
+    {
+      "id": "8e0b232f-5e0c-4364-b5ae-e2ff530ae97d",
+      "community": true,
+      "name": "豆脚",
+      "nameEn": "豆脚",
+      "filename": "8e0b232f-5e0c-4364-b5ae-e2ff530ae97d.png",
+      "author": "豆包",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 69,
+        "right": 106,
+        "top": 59,
+        "bottom": 75,
+        "scale": 0.6,
+        "padding": [
+          31.2,
+          50.2,
+          33.8,
+          34.8
+        ],
+        "color": "#44362f",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
+    },
+    {
+      "id": "ce681364-0fd0-4052-8bb0-85d3b035cefc",
+      "community": true,
+      "name": "蒙德里安",
+      "nameEn": "蒙德里安",
+      "filename": "ce681364-0fd0-4052-8bb0-85d3b035cefc.png",
+      "author": "一个路人",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 109,
+        "right": 145,
+        "top": 54,
+        "bottom": 59,
+        "scale": 0.6,
+        "padding": [
+          36.1,
+          15.9,
+          28.9,
+          69.1
+        ],
+        "color": "#44362f",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
+    },
+    {
+      "id": "f0838329-206e-4541-9241-752f0b031fd0",
+      "community": true,
+      "name": "可爱的外星咪",
+      "nameEn": "可爱的外星咪",
+      "filename": "f0838329-206e-4541-9241-752f0b031fd0.png",
+      "author": "heheda",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 87,
+        "right": 114,
+        "top": 73,
+        "bottom": 89,
+        "scale": 0.7,
+        "padding": [
+          50.5,
+          37.1,
+          45.6,
+          39.9
+        ],
+        "color": "#ffffff",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
     }
   ]
 }
