@@ -128,6 +128,38 @@
         "zh": "经人工审核收录的社区作品。",
         "en": "A community bubble accepted after manual review."
       }
+    },
+    {
+      "id": "17c658b2-5cb8-4c32-ab50-2f8ad668775a",
+      "community": true,
+      "name": "美人鱼",
+      "nameEn": "美人鱼",
+      "filename": "17c658b2-5cb8-4c32-ab50-2f8ad668775a.png",
+      "author": "一个路人",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 69,
+        "right": 140,
+        "top": 73,
+        "bottom": 89,
+        "scale": 0.6,
+        "padding": [
+          32.4,
+          39.1,
+          32.6,
+          45.9
+        ],
+        "color": "#44362f",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
     }
   ]
 }
