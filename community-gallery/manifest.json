@@ -96,6 +96,38 @@
         "zh": "经人工审核收录的社区作品。",
         "en": "A community bubble accepted after manual review."
       }
+    },
+    {
+      "id": "d806efe0-4ec1-4fc6-a06f-bfed2f23a756",
+      "community": true,
+      "name": "桂小太郎猫咪",
+      "nameEn": "桂小太郎猫咪",
+      "filename": "d806efe0-4ec1-4fc6-a06f-bfed2f23a756.png",
+      "author": "heheda",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 69,
+        "right": 145,
+        "top": 81,
+        "bottom": 89,
+        "scale": 0.6,
+        "padding": [
+          32.8,
+          38.3,
+          32.2,
+          46.7
+        ],
+        "color": "#ffffff",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
     }
   ]
 }
