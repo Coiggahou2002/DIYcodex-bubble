@@ -178,6 +178,10 @@ class Handler(BaseHTTPRequestHandler):
      sid=str(body.get('id',''));action=body.get('action');reason=str(body.get('reason',''))[:500]
      if action not in ('approve','reject'):raise ValueError('审核动作无效')
      return self.send(review_cli(action,sid,'--reason',reason))
+    if self.path=='/api/review/batch':
+     ids=body.get('ids',[]);reason=str(body.get('reason',''))[:500]
+     if not isinstance(ids,list) or not ids:raise ValueError('请先选择投稿')
+     return self.send(review_cli('batch-approve',json.dumps(ids,ensure_ascii=False),'--reason',reason))
     if body.get('platform',s['platform'])!=s['platform']:raise ValueError('平台已切换，请刷新后重试')
     if self.path=='/api/restore-builtins':
      added=seed_presets(s,restore=True);return self.send({'ok':True,'added':added})

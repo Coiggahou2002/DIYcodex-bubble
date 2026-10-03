@@ -51,7 +51,7 @@ def publish_work(sid,row):
  subprocess.run(['git','push','origin','gh-pages'],cwd=pages,check=True,capture_output=True,text=True)
  return {'status':'published','pages':'deployed'}
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('action',choices=['list','inspect','approve','reject']);parser.add_argument('id',nargs='?');parser.add_argument('--output',type=Path);parser.add_argument('--reason',default='');args=parser.parse_args()
+ parser=argparse.ArgumentParser();parser.add_argument('action',choices=['list','inspect','approve','reject','batch-approve']);parser.add_argument('id',nargs='?');parser.add_argument('--output',type=Path);parser.add_argument('--reason',default='');args=parser.parse_args()
  if args.action=='list':
   try:entries=content('pending')
   except subprocess.CalledProcessError as error:
@@ -63,6 +63,20 @@ def main():
     row=record(entry['name'])
     if row['status']=='pending':pending.append(row)
   print(json.dumps({'pendingCount':len(pending),'submissions':pending},ensure_ascii=False,indent=2));return
+ if args.action=='batch-approve':
+  ids=json.loads(args.id or '[]')
+  if not isinstance(ids,list) or not ids or len(ids)>50:raise ValueError('批量审核数量无效')
+  results=[]
+  for sid in ids:
+   row=record(str(sid))
+   if row['status']!='pending':raise ValueError(f'{sid} 已审核，不能重复提交')
+   row['status']='approved';row['reviewReason']=args.reason
+   path=f'pending/{sid}/submission.json';old=content(path)
+   gh('api','--method','PUT',f'repos/{QUEUE}/contents/{path}',body={'message':f'Review submission {sid}: approved','sha':old['sha'],'content':base64.b64encode(json.dumps(row,ensure_ascii=False,indent=2).encode()).decode()})
+   results.append({'id':sid,'status':'approved'})
+  # Publish each approved item using the same idempotent release path.
+  for result in results: result.update(publish_work(result['id'],record(result['id'])))
+  print(json.dumps({'results':results},ensure_ascii=False));return
  row=record(args.id)
  if args.action=='inspect':
   png=read(f'pending/{args.id}/bubble.png')
