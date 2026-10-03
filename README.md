@@ -118,6 +118,7 @@
 
 ## 相关文档
 
-- [运行与开发说明](DEVELOPMENT.md)
-- [社区投稿与作品库](COMMUNITY.md)
-- [Agent 工作指引](AGENTS.md)
+- [运行与开发说明](DEVELOPMENT.md) · [English](DEVELOPMENT.en.md)
+- [社区投稿与作品库](COMMUNITY.md) · [English](COMMUNITY.en.md)
+- [Agent 工作指引](AGENTS.md) · [English](AGENTS.en.md)
+- [素材权利与使用责任](RESPONSIBILITY.md) · [English](RESPONSIBILITY.en.md)

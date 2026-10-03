@@ -1,5 +1,7 @@
 # 素材权利与使用责任
 
+[English](RESPONSIBILITY.en.md)
+
 DIY Codex Bubble 是用于本机聊天外观调整的通用工具。本项目与 OpenAI、Codex、ChatGPT、抖音及其他平台无官方合作、授权或隶属关系。
 
 ## 代码许可与素材是两回事

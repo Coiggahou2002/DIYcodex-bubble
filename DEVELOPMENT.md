@@ -1,5 +1,7 @@
 # 开发与运行说明
 
+[English](DEVELOPMENT.en.md)
+
 面向贡献者的技术信息。普通用户请先读 [README](README.md)。
 
 ## 运行源码

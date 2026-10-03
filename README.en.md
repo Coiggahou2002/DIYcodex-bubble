@@ -118,6 +118,7 @@ The code license does not grant rights to images, character IP, likenesses, or t
 
 ## Related documents
 
-- [Development notes](DEVELOPMENT.md)
-- [Community notes](COMMUNITY.md)
-- [Agent instructions](AGENTS.md)
+- [Development notes](DEVELOPMENT.en.md) · [中文](DEVELOPMENT.md)
+- [Community notes](COMMUNITY.en.md) · [中文](COMMUNITY.md)
+- [Agent instructions](AGENTS.en.md) · [中文](AGENTS.md)
+- [Usage responsibility](RESPONSIBILITY.en.md) · [中文](RESPONSIBILITY.md)

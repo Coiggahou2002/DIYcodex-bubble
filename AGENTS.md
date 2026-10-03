@@ -1,5 +1,7 @@
 # Agent 工作指引
 
+[English](AGENTS.en.md)
+
 本项目是 DIY Codex Bubble（气泡工坊），目前支持 macOS 的 Codex/ChatGPT 与豆包桌面应用。面向用户的说明放 README，开发细节放 DEVELOPMENT.md。
 
 ## 修改约束
