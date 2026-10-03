@@ -31,6 +31,10 @@ Works with the **Codex / ChatGPT and Doubao desktop apps** on macOS. Only **your
 
 > An independent appearance tool. **Not an official OpenAI or Codex product.** It does not modify the official app installation. The desktop studio lives on `main`; the public gallery is generated separately and published from `gh-pages`, so source downloads do not include it.
 
+## Design your own bubble?
+
+The companion [douyinQIPAO design skill](https://github.com/kaitongg-bit/douyinQIPAO) helps you create original PNGs — a Codex-powered generator that follows Douyin bubble specs, maintained and updated independently, so it never needs to move in lockstep with this studio. Once it's ready, import the image here to tune, preview, and apply.
+
 ## Features
 
 - **Keep your favorites together.** Import PNGs or pick a local asset folder in Finder. Search, favorite, and switch anytime.
