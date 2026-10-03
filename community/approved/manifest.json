@@ -64,6 +64,38 @@
         "zh": "经人工审核收录的社区作品。",
         "en": "A community bubble accepted after manual review."
       }
+    },
+    {
+      "id": "9227f60c-0dfc-4917-a248-53ce8d2fd0c5",
+      "community": true,
+      "name": "坂田银时猫咪",
+      "nameEn": "坂田银时猫咪",
+      "filename": "9227f60c-0dfc-4917-a248-53ce8d2fd0c5.png",
+      "author": "heheda",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 69,
+        "right": 145,
+        "top": 80,
+        "bottom": 85,
+        "scale": 0.6,
+        "padding": [
+          29,
+          37,
+          36,
+          48
+        ],
+        "color": "#44362f",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
     }
   ]
 }
