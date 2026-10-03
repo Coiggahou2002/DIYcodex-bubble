@@ -34,6 +34,70 @@
       },
       "downloadUrl": "https://github.com/kaitongg-bit/DIYcodex-bubble/releases/download/presets-v1/fluffy-cat-demo.png",
       "downloadStatsUrl": "https://api.github.com/repos/kaitongg-bit/DIYcodex-bubble/releases/tags/presets-v1"
+    },
+    {
+      "id": "8be39329-230f-4e8b-9731-66ab5d5cd615",
+      "community": true,
+      "name": "毛茸茸猫咪 · 线上链路验收",
+      "nameEn": "毛茸茸猫咪 · 线上链路验收",
+      "filename": "8be39329-230f-4e8b-9731-66ab5d5cd615.png",
+      "author": "online-demo（线上验收）",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 69,
+        "right": 145,
+        "top": 73,
+        "bottom": 89,
+        "scale": 0.6,
+        "padding": [
+          29,
+          37,
+          36,
+          48
+        ],
+        "color": "#44362f",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
+    },
+    {
+      "id": "17e9a3e9-81e2-46a7-8765-4322c126f777",
+      "community": true,
+      "name": "Usagi乌萨奇",
+      "nameEn": "Usagi乌萨奇",
+      "filename": "17e9a3e9-81e2-46a7-8765-4322c126f777.png",
+      "author": "heheda",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 69,
+        "right": 115,
+        "top": 73,
+        "bottom": 89,
+        "scale": 0.7,
+        "padding": [
+          41,
+          39.7,
+          24,
+          45.3
+        ],
+        "color": "#44362f",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
     }
   ]
 }
