@@ -25,6 +25,7 @@ $('reset').onclick=()=>{if(!selected)return;config=defaults(selected);fillInputs
 $('apply').onclick=async()=>{try{$('apply').disabled=true;$('apply').textContent=t('正在应用…');const result=await api('apply',{id:selected.id,config});activeId=selected.id;selected.config=structuredClone(config);setDirty(false);updateStatus(result.status);toast(result.status.connected?t('气泡已应用，回到聊天查看'):t('设置已保存，请启动 {platform} 连接',{platform:platformName()}));}catch(e){toast(e.message);}finally{$('apply').replaceChildren(document.createTextNode(t('应用到 {platform}',{platform:platformName()})+' '),Object.assign(document.createElement('span'),{textContent:'↗'}));$('apply').disabled=!valid();}};
 $('restore').onclick=async()=>{try{const r=await api('restore',{});activeId=null;updateStatus(r.status);toast(t('已恢复默认气泡'));}catch(e){toast(e.message);}};
 $('launch').onclick=async()=>{try{const r=await api('launch',{});toast(r.message);}catch(e){toast(e.message);}};
+$('launchActive').onclick=async()=>{const button=$('launchActive');button.disabled=true;try{const r=await api('launch-active',{});toast(r.message);}catch(e){toast(e.message);}finally{button.disabled=false;}};
 $('theme').onclick=()=>{dark=!dark;$('chat').classList.toggle('dark',dark);$('theme').textContent=dark?t('浅色预览 ☼'):t('深色预览 ☾');};for(const button of document.querySelectorAll('[data-mode]'))button.onclick=()=>{mode=button.dataset.mode;document.querySelectorAll('[data-mode]').forEach(el=>el.classList.toggle('on',el===button));$('custom').hidden=mode!=='custom';update();};$('custom').oninput=update;$('previewWidth').oninput=update;
 $('import').onclick=$('emptyImport').onclick=()=>$('fileInput').click();$('fileInput').onchange=async e=>{try{let id;for(const f of e.target.files){if(f.size>2*1024*1024)throw Error(t('PNG 不得超过 2 MB'));const buffer=await f.arrayBuffer();let binary='';for(const b of new Uint8Array(buffer))binary+=String.fromCharCode(b);const r=await api('import',{name:f.name,data:btoa(binary)});id=r.id;}dirty=false;await load(id);toast(t('PNG 已导入素材库'));}catch(e){toast(e.message);}finally{$('fileInput').value='';}};
 $('folder').onclick=async()=>{const button=$('folder');button.disabled=true;button.textContent=t('请在选择窗口中选取…');try{const result=await api('choose-folder',{});if(!result.cancelled){await load(undefined,true);toast(t('素材文件夹已连接'));}}catch(e){toast(e.message);}finally{button.disabled=false;button.textContent=t('＋ 连接素材文件夹');}};
@@ -48,6 +49,7 @@ collapseLibrary(localStorage.getItem('bubble-library-collapsed')==='1');
 
 function refreshLanguage(){
  translatePage();renderGallery();setDirty(dirty);updateStatus(lastStatus);codexPreview?.refreshLanguage();
+ $('launchActive').textContent=t('同时恢复已选气泡');
  if($('toast').style.display==='block')$('toast').textContent=t($('toast').textContent);
  if($('designDialog').open)$('designPrompt').value=t($('designPrompt').value);
  $('folderHint').textContent=folderCount?t('{count} 个素材文件夹',{count:folderCount}):t('支持 PNG 导入与本机文件夹');

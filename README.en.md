@@ -64,11 +64,11 @@ Use **EN / 中文** in the top-right corner to switch languages. Bubble settings
 Currently supported on **macOS with the Codex / ChatGPT or Doubao desktop app**. Python 3.9+ and Node.js 22+ must already be installed. This is not a standalone app with bundled runtimes.
 
 1. [Download the latest ZIP](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) and extract it somewhere you can keep.
-2. In **Finder**, double-click `Start Bubble Studio.command`. A Terminal window opens to keep the studio running; leave it open while using the studio.
+2. In **Finder**, double-click `Start Bubble Studio.command` to open the studio.
 3. Open [Bubble Studio](http://127.0.0.1:19329). Try the three built-in presets, click **＋** to import a PNG, or **Connect a folder** to select your asset folder.
 4. Select **Codex / Doubao** in the header, tune and preview a bubble, save it, then click **Apply to Codex** or **Apply to Doubao**.
 
-**Not connected?** Save your current input and fully quit the selected desktop app with `⌘Q`. Open the studio in Safari or Chrome, then click its **Launch … with bubbles** button. The first connection requires restarting the desktop app; the studio never force-quits your conversation. Closing a window is not the same as quitting.
+**After fully quitting the apps:** Save your input, quit Codex / ChatGPT and Doubao with `⌘Q`, then double-click `Start Bubble Apps.command` in Finder. It starts the studio and launches every app with a selected bubble; the saved bubbles return when connected. You can also click **Launch all selected bubbles** in the studio. Launching the original app icons does not enable the local debugging ports required by the studio. The studio never force-quits an already running app; if it reports a normal launch, quit that app manually and try again.
 
 **Seeing source code after double-clicking?** Open the launcher from Finder — Codex's file preview only displays its contents. For runtime requirements and running from source, see [Development notes](DEVELOPMENT.md).
 

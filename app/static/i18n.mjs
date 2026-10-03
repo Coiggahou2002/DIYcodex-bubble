@@ -9,6 +9,8 @@ export const english = {
   "设置已保存，请启动 {platform} 连接": "Settings saved. Launch {platform} to connect.",
   "应用到 {platform}": "Apply to {platform}",
   "启动 {platform} 并换肤": "Launch {platform} with bubbles",
+  "同时恢复已选气泡": "Launch all selected bubbles",
+  "完全退出后，从工坊启动应用才能重新连接气泡。": "After quitting, launch the apps from the studio to reconnect your bubbles.",
   "用于聊天；抖音上传需调整尺寸": "For chat; resize before uploading to Douyin",
   "不支持的平台": "Unsupported app",
   "平台已切换，请刷新后重试": "The target app changed. Refresh and try again.",

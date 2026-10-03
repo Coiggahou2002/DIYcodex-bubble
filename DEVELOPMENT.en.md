@@ -34,6 +34,8 @@ Runtime styles are injected through the CDP port bound to `127.0.0.1:19327`; the
 
 Only macOS desktop builds are verified so far; app updates may require adaptation.
 
+`Start Bubble Apps.command` starts the local studio and calls `/api/launch-active`, launching each configured app with its own CDP port. The per-platform monitor then reconnects and reapplies the saved style. A normally launched app cannot gain a debugging port after startup, so the endpoint asks the user to quit it manually and never terminates the process itself.
+
 ## Verification
 
 ```sh

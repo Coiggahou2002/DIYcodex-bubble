@@ -154,7 +154,29 @@ class StudioTests(unittest.TestCase):
    with patch.object(server.sys,'platform','darwin'),patch.object(Path,'exists',lambda p:str(p)==exe or exists(p)),patch.object(server.subprocess,'run',return_value=CompletedProcess([],1)) as run,patch.object(server.subprocess,'Popen') as launch:
     self.request('/api/launch',{'platform':key})
     self.assertEqual(launch.call_args.args[0],[exe,'--remote-debugging-address=127.0.0.1',f'--remote-debugging-port={port}'])
-    self.assertEqual(run.call_args.args[0][0],'/usr/bin/pgrep')
+    self.assertEqual(run.call_args.args[0][0],'/bin/ps')
+ def test_launch_active_starts_both_saved_apps_without_switching_platform(self):
+  from subprocess import CompletedProcess
+  s=server.state()
+  for key in ('codex','doubao'):s['platforms'][key]['active']={'id':key,'path':str(self.folder/'one.png'),'config':server.defaults(198,162),'version':key}
+  s['platform']='doubao';s['active']=s['platforms']['doubao']['active'];server.save(s)
+  apps={'/Applications/ChatGPT.app/Contents/MacOS/ChatGPT','/Applications/Doubao.app/Contents/MacOS/Doubao'}
+  exists=Path.exists
+  with patch.object(server.sys,'platform','darwin'),patch.object(Path,'exists',lambda p:str(p) in apps or exists(p)),patch.object(server.subprocess,'run',return_value=CompletedProcess([],1)),patch.object(server.subprocess,'Popen') as launch:
+   result=self.request('/api/launch-active',{})
+   self.assertEqual([x['state'] for x in result['results']],['starting','starting'])
+   self.assertEqual(len(launch.call_args_list),2)
+   self.assertEqual({call.args[0][-1] for call in launch.call_args_list},{'--remote-debugging-port=19327','--remote-debugging-port=19326'})
+  self.assertEqual(server.state()['platform'],'doubao')
+ def test_running_app_without_debug_port_is_not_force_quit(self):
+  from subprocess import CompletedProcess
+  s=server.state();s['platforms']['doubao']['active']={'id':'doubao','path':str(self.folder/'one.png'),'config':server.defaults(198,162),'version':'test'};server.save(s)
+  apps={'/Applications/ChatGPT.app/Contents/MacOS/ChatGPT','/Applications/Doubao.app/Contents/MacOS/Doubao'}
+  exists=Path.exists
+  with patch.object(server.sys,'platform','darwin'),patch.object(Path,'exists',lambda p:str(p) in apps or exists(p)),patch.object(server.subprocess,'run',return_value=CompletedProcess([],0,'/Applications/Doubao.app/Contents/MacOS/Doubao\n','')),patch.object(server,'bridge',return_value={'connected':False}),patch.object(server.subprocess,'Popen') as launch:
+   result=self.request('/api/launch-active',{})
+   self.assertEqual(result['results'][0]['state'],'quit-required')
+   launch.assert_not_called()
  def test_asset_route_cannot_read_arbitrary_path(self):
   with self.assertRaises(urllib.error.HTTPError) as err:self.request('/asset/../../app/server.py')
   self.assertEqual(err.exception.code,404)

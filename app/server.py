@@ -117,6 +117,21 @@ def review_image(sid):
  result=subprocess.run(['gh','api',f'repos/kaitongg-bit/DIYcodex-bubble-submissions/contents/pending/{sid}/bubble.png'],capture_output=True,text=True,timeout=30)
  if result.returncode:raise ValueError('找不到待审图片')
  return base64.b64decode(json.loads(result.stdout)['content'])
+def launch_platform(key,s):
+ if sys.platform!='darwin':raise ValueError('目前仅支持 macOS')
+ descriptor=PLATFORMS[key]
+ apps=[p for p in map(Path,descriptor['apps']) if p.exists()]
+ if not apps:raise ValueError('未找到豆包桌面应用，请确认已安装 /Applications/Doubao.app' if key=='doubao' else '未找到 ChatGPT 或 Codex 应用')
+ processes=subprocess.run(['/bin/ps','-axo','command='],capture_output=True,text=True,check=True)
+ lines=(processes.stdout or '').splitlines()
+ running_app=next((app for app in apps if any(line==str(app) or line.startswith(str(app)+' ') for line in lines)),None)
+ app=running_app or apps[0]
+ if running_app:
+  if bridge('status',key).get('connected'):return {'platform':key,'state':'connected','message':f'{descriptor["name"]} 已连接，气泡会自动恢复。'}
+  return {'platform':key,'state':'quit-required','message':f'{descriptor["name"]} 已普通启动。请保存输入并用 ⌘Q 完全退出，再点击启动。'}
+ with (DATA/'app-start.log').open('a') as log:
+  subprocess.Popen([str(app),'--remote-debugging-address=127.0.0.1',f'--remote-debugging-port={s["platforms"][key]["debugPort"]}'],stdout=log,stderr=log,start_new_session=True)
+ return {'platform':key,'state':'starting','message':f'{descriptor["name"]} 正在启动，连接后会自动恢复已选气泡。'}
 def watch(platform):
  while not STOP.wait(3):
   s=state();active=s['platforms'][platform].get('active')
@@ -182,6 +197,14 @@ class Handler(BaseHTTPRequestHandler):
      ids=body.get('ids',[]);reason=str(body.get('reason',''))[:500]
      if not isinstance(ids,list) or not ids:raise ValueError('请先选择投稿')
      return self.send(review_cli('batch-approve',json.dumps(ids,ensure_ascii=False),'--reason',reason))
+    if self.path=='/api/launch-active':
+     active=[key for key in PLATFORMS if s['platforms'][key].get('active')]
+     if not active:raise ValueError('还没有已应用的气泡；请先在工坊中选择并应用。')
+     results=[]
+     for key in active:
+      try:results.append(launch_platform(key,s))
+      except (ValueError,OSError,subprocess.SubprocessError) as error:results.append({'platform':key,'state':'unavailable','message':str(error)})
+     return self.send({'ok':True,'results':results,'message':' '.join(result['message'] for result in results)})
     if body.get('platform',s['platform'])!=s['platform']:raise ValueError('平台已切换，请刷新后重试')
     if self.path=='/api/restore-builtins':
      added=seed_presets(s,restore=True);return self.send({'ok':True,'added':added})
@@ -250,13 +273,8 @@ class Handler(BaseHTTPRequestHandler):
      save(s)
     elif self.path=='/api/restore':s['active']=None;save(s)
     elif self.path=='/api/launch':
-     if sys.platform!='darwin':raise ValueError('目前仅支持 macOS')
-     app=next((p for p in [Path(path) for path in PLATFORMS[s['platform']]['apps']] if p.exists()),None)
-     if not app:raise ValueError('未找到豆包桌面应用，请确认已安装 /Applications/Doubao.app' if s['platform']=='doubao' else '未找到 ChatGPT 或 Codex 应用')
-     running=subprocess.run(['/usr/bin/pgrep','-f','^'+str(app)],capture_output=True)
-     if running.returncode==0:raise ValueError('请先保存输入并用 ⌘Q 完全退出豆包，再点击启动。' if s['platform']=='doubao' else '请先保存输入并用 ⌘Q 完全退出 ChatGPT/Codex，再点击启动。')
-     with (DATA/'app-start.log').open('a') as log:subprocess.Popen([str(app),'--remote-debugging-address=127.0.0.1',f'--remote-debugging-port={s["debugPort"]}'],stdout=log,stderr=log,start_new_session=True)
-     return self.send({'ok':True,'message':'正在启动应用，连接后会自动应用已选气泡。'})
+     result=launch_platform(s['platform'],s)
+     return self.send({'ok':True,**result})
     else:raise ValueError('未知操作')
    if self.path in ('/api/apply','/api/restore'):STATUSES[s['platform']]=bridge('restore' if self.path=='/api/restore' else 'apply',s['platform'])
    return self.send({'ok':True,'status':status_for(s),'platform':s['platform']})
