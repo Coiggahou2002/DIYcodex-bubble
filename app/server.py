@@ -108,7 +108,7 @@ def bridge(action,platform="codex"):
   return json.loads(result.stdout) if result.returncode==0 else {'connected':False,'matched':0,'message':'应用连接失败'}
  except Exception:return {'connected':False,'matched':0,'message':'应用连接暂不可用'}
 def review_cli(*args):
- result=subprocess.run([sys.executable,str(ROOT/'scripts/review-submissions.py'),*args],capture_output=True,text=True,timeout=30)
+ result=subprocess.run([sys.executable,str(ROOT/'scripts/review-submissions.py'),*args],capture_output=True,text=True,timeout=180)
  if result.returncode:raise ValueError((result.stderr or result.stdout or '审核服务失败').strip())
  return json.loads(result.stdout) if result.stdout.strip() else {}
 def review_image(sid):

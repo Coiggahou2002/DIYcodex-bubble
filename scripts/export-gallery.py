@@ -13,7 +13,9 @@ def export(destination):
  page=destination/'index.html';page.write_text(page.read_text().replace('<body>','<body data-mode="static">'))
  workshop=destination/'workshop.html';workshop.write_text(workshop.read_text().replace('href="gallery.html"','href="./index.html"'))
  shutil.copytree(ROOT/'presets',destination/'presets',dirs_exist_ok=True)
- shutil.copytree(ROOT/'community/approved',destination/'community-gallery',dirs_exist_ok=True)
+ community_destination=destination/'community-gallery'
+ if community_destination.exists():shutil.rmtree(community_destination)
+ shutil.copytree(ROOT/'community/approved',community_destination)
  shutil.copy2(ROOT/'LICENSE',destination/'LICENSE')
  (destination/'.nojekyll').touch()
  # Bust Pages CDN caches when stylesheet contents change.

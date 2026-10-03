@@ -19,10 +19,12 @@ GitHub and Cloudflare free quotas apply; this setup does not promise unlimited f
 python3 scripts/review-submissions.py list
 python3 scripts/review-submissions.py inspect <id> --output /tmp/bubble-review
 python3 scripts/review-submissions.py approve <id> --reason 'Image and rights reviewed'
+python3 scripts/review-submissions.py batch-approve '["<id-1>","<id-2>"]' --reason 'Image and rights reviewed'
+python3 scripts/review-submissions.py publish-approved '["<id-1>","<id-2>"]'
 python3 scripts/review-submissions.py reject <id> --reason 'Reason'
 ```
 
-Requires the maintainer's normal `gh` login. List prints pendingCount; rejected/approved entries stay private for the audit trail. The local review page's **通过并发布** action records the approval, copies the approved PNG/config into `community/approved`, updates the manifest, exports the static site, and pushes `gh-pages`. GitHub Pages then builds and its CDN refreshes; allow a few minutes for the public gallery to update. If a deployment fails, the item remains approved in the private queue and can be republished after fixing the Pages worktree. No public API can approve submissions. Do not publicly expose the private queue, tokens or unreviewed PNGs.
+Requires the maintainer's normal `gh` login. List shows both pending and approved works that have not reached the remote Pages manifest; rejected/approved entries stay private for the audit trail. The local review page can select multiple items and publish them with one `main` push and one `gh-pages` push. GitHub Pages then builds and its CDN refreshes; allow a few minutes for the public gallery to update. If a deployment fails, the approved items remain in the review list and can be retried. No public API can approve submissions. Do not publicly expose the private queue, tokens or unreviewed PNGs.
 
 ## Local acceptance test
 
