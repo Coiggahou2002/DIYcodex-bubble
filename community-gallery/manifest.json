@@ -32,6 +32,38 @@
         "zh": "经人工审核收录的社区作品。",
         "en": "A community bubble accepted after manual review."
       }
+    },
+    {
+      "id": "29daf32b-6915-4364-aa5a-4e77c406bf05",
+      "community": true,
+      "name": "y2k digit",
+      "nameEn": "y2k digit",
+      "filename": "29daf32b-6915-4364-aa5a-4e77c406bf05.png",
+      "author": "heheda",
+      "license": "Non-commercial only",
+      "config": {
+        "width": 198,
+        "height": 162,
+        "left": 95,
+        "right": 102,
+        "top": 73,
+        "bottom": 80,
+        "scale": 0.6,
+        "padding": [
+          30.6,
+          41.3,
+          34.4,
+          43.7
+        ],
+        "color": "#44362f",
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "#d0d0d0"
+      },
+      "description": {
+        "zh": "经人工审核收录的社区作品。",
+        "en": "A community bubble accepted after manual review."
+      }
     }
   ]
 }
