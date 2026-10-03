@@ -22,7 +22,7 @@ python3 scripts/review-submissions.py approve <id> --reason 'Image and rights re
 python3 scripts/review-submissions.py reject <id> --reason 'Reason'
 ```
 
-Requires the maintainer's normal `gh` login. List prints pendingCount; rejected/approved entries stay private for the audit trail. Approval changes the review record only. After approval, inspect the image and tune the nine-slice config in the studio, copy only approved PNG/config into `community/approved`, update its manifest, publish PNG assets to the preset release, and export/publish the Pages branch. No public API can approve submissions. Do not publicly expose the private queue, tokens or unreviewed PNGs.
+Requires the maintainer's normal `gh` login. List prints pendingCount; rejected/approved entries stay private for the audit trail. The local review page's **通过并发布** action records the approval, copies the approved PNG/config into `community/approved`, updates the manifest, exports the static site, and pushes `gh-pages`. GitHub Pages then builds and its CDN refreshes; allow a few minutes for the public gallery to update. If a deployment fails, the item remains approved in the private queue and can be republished after fixing the Pages worktree. No public API can approve submissions. Do not publicly expose the private queue, tokens or unreviewed PNGs.
 
 ## Local acceptance test
 
