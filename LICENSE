@@ -1,40 +1,21 @@
-DIY Codex Bubble Non-Commercial License 1.0
+MIT License
 
-Copyright (c) 2026 Bubble Studio contributors
+Copyright (c) 2026 kaitongg-bit
 
-1. Permission
-Permission is granted to use, copy, study, modify, and redistribute this
-software and its modifications solely for non-commercial purposes, subject
-to retaining this copyright notice and the entire license in all copies or
-substantial portions of the software. Redistribution and modifications must
-remain subject to these non-commercial terms.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-2. Commercial use is prohibited
-The software, in whole or in part, and modifications may not be used for
-commercial purposes. This includes selling or licensing copies; providing
-paid services; bundling it with commercial products; monetizing it through
-advertising or subscriptions; and using it in business operations or to
-produce materials for commercial activities. No commercial rights are granted
-by this license. Free distribution alone does not make a commercial activity
-non-commercial.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-3. Third-party rights
-This license grants no rights to third-party images, characters, trademarks,
-likenesses, fonts, or other user-provided content. Users are responsible for
-obtaining necessary rights and complying with applicable law. Ownership of
-user-provided content is not transferred by use of the software.
-
-4. No warranty; limitation of liability
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-NONINFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE AUTHORS
-AND COPYRIGHT HOLDERS SHALL NOT BE LIABLE FOR CLAIMS, DAMAGES, OR OTHER
-LIABILITY ARISING FROM THE SOFTWARE OR ITS USE. THIS LICENSE DOES NOT EXCLUDE
-OR LIMIT LIABILITY THAT APPLICABLE LAW DOES NOT PERMIT TO BE EXCLUDED OR LIMITED.
-
-5. Version scope
-These terms apply to releases beginning with v0.1.10 and subsequent work
-published under this license. They do not revoke permissions already granted
-for earlier versions distributed under the MIT License. This is a custom
-source-available license, not the MIT License or an OSI-approved open-source
-license.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

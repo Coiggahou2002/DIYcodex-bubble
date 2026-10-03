@@ -1,64 +1,70 @@
-![DIY Codex Bubble](presets/alien-cat.png)
+<p align="center">
+  <img src="presets/alien-cat.png" alt="DIY Codex Bubble" width="96">
+</p>
 
+<h2 align="center">DIY Codex Bubble · 气泡工坊</h2>
 
+<h4 align="center">把自己的图，变成 Codex 聊天气泡。</h4>
 
-![Stars](https://img.shields.io/github/stars/kaitongg-bit/DIYcodex-bubble)
+<p align="center">
+  <a href="https://github.com/kaitongg-bit/DIYcodex-bubble"><img src="https://img.shields.io/github/stars/kaitongg-bit/DIYcodex-bubble" alt="Stars"></a>
+  <img src="https://img.shields.io/badge/platform-macOS-lightgrey" alt="macOS">
+  <img src="https://img.shields.io/badge/Python-3.9%2B-blue" alt="Python 3.9+">
+  <img src="https://img.shields.io/badge/Node.js-22%2B-blue" alt="Node.js 22+">
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
+</p>
+
+<p align="center">
+  <strong>中文</strong> · <a href="./README.en.md">English</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest"><strong>下载最新版</strong></a> ·
+  <a href="https://kaitongg-bit.github.io/DIYcodex-bubble/">在线气泡库</a> ·
+  <a href="#社区与作品库">贡献气泡</a> ·
+  <a href="DEVELOPMENT.md">开发说明</a>
+</p>
 
 支持 **Codex / ChatGPT 和豆包桌面端**，只替换 **你发送的消息气泡**，助手回复保持原样；想换回来，点「恢复默认」即可。
 
-**macOS 专用・中英文界面・本机素材库・随时恢复・非商业使用**
+**macOS 专用 · 中英文界面 · 本机素材库 · 随时恢复 · MIT 许可**
 
-> 非 OpenAI / Codex 官方产品，独立的聊天外观工具，不修改官方应用安装包。桌面工坊源码在 
->
-> `main`
->
->  分支；在线作品库是单独生成并发布到 
->
-> `gh-pages`
->
->  的 Pages 站点，不会混进源码下载。
+> 非 OpenAI / Codex 官方产品，独立的聊天外观工具，不修改官方应用安装包。桌面工坊源码在 `main` 分支；在线作品库是单独生成并发布到 `gh-pages` 的 Pages 站点，不会混进源码下载。
 
 ## 特性
 
-
-
-* **把素材收进自己的库** —— 导入 PNG，或在 Finder 中选择整个素材文件夹；搜索、收藏、随时切换。
-
-* **直接在图上调** —— 拖动金色手柄设置拉伸线，拖动蓝色文字框调整文字位置和空间，不用计算四边数字。
-
-* **短句长话都看看** —— 实时预览短句、长消息和自己的文字，可切换浅色、深色背景。
-
-* **再加一点细节** —— 文字颜色、缩放、圆角和边框；「适合聊天」帮你把大图缩到合适大小。
-
-* **满意就应用** —— 每款气泡各自保存设置，可随时换款，也可一键恢复默认。
+- **把素材收进自己的库** —— 导入 PNG，或在 Finder 中选择整个素材文件夹；搜索、收藏、随时切换。
+- **直接在图上调** —— 拖动金色手柄设置拉伸线，拖动蓝色文字框调整文字位置和空间，不用计算四边数字。
+- **短句长话都看看** —— 实时预览短句、长消息和自己的文字，可切换浅色、深色背景。
+- **再加一点细节** —— 文字颜色、缩放、圆角和边框；「适合聊天」帮你把大图缩到合适大小。
+- **满意就应用** —— 每款气泡各自保存设置，可随时换款，也可一键恢复默认。
 
 点击右上角 **EN / 中文** 切换网页语言，已调整的气泡和未保存的设置会保留。
 
 ## 截图
 
+<table align="center">
+  <tr>
+    <td align="center"><img src="docs/images/chat-simulation.png" alt="外星小猫在 Codex 风格的聊天模拟器中" width="420"><br><sub>Codex 风格聊天模拟器：短句、长消息中的气泡效果（独立模拟，非真实截图）</sub></td>
+    <td align="center"><img src="docs/images/doubao-chat.png" alt="豆包中的真实聊天气泡效果" width="420"><br><sub>豆包实际使用效果：你的消息换上气泡，助手回复保持原样</sub></td>
+  </tr>
+</table>
 
-
-![外星小猫在 Codex 风格的聊天模拟器中](docs/images/chat-simulation.png)
-
-
-
-![气泡工坊：左边选素材，中间拖动调整，右边预览聊天效果](docs/images/studio-overview.jpg)
+<p align="center">
+  <img src="docs/images/studio-overview.jpg" alt="气泡工坊：左边选素材，中间拖动调整，右边预览聊天效果" width="900"><br>
+  <sub>浅色工坊预览：外星小猫正在预览，LOVE 与小猫炒菜在左侧素材库（展示的是工坊，不是真实聊天页面）</sub>
+</p>
 
 ## 快速开始
 
 目前支持 **macOS 上的 Codex / ChatGPT 或豆包桌面应用**，需要电脑已有 Python 3.9+ 和 Node.js 22+；暂不提供免安装运行环境的独立 App。
 
-
-
 1. [下载最新版 ZIP](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest)，解压到一个方便保留的位置。
-
 2. 在 **Finder（访达）** 双击 `Start Bubble Studio.command`。出现终端窗口是正常的，它负责让工坊保持运行，使用时先别关闭。
-
 3. 打开 [气泡工坊](http://127.0.0.1:19329)，先试内置的三款预设；也可以点左上角 **＋** 导入图片，或点「连接素材文件夹」选择你的素材目录。
-
 4. 顶部选择 **Codex / 豆包**，选一款气泡调整、预览、保存，再点「应用到 Codex」或「应用到豆包」。
 
-**显示 "未连接"？** 先保存正在输入的内容，用 `⌘Q` 完全退出所选应用（Codex / ChatGPT 或豆包）；在 Safari 或 Chrome 打开工坊，再点对应的「启动… 并换肤」。首次连接需要重新启动应用，工坊不会强制关闭你的聊天。仅关闭窗口不算退出。
+**显示"未连接"？** 先保存正在输入的内容，用 `⌘Q` 完全退出所选应用（Codex / ChatGPT 或豆包）；在 Safari 或 Chrome 打开工坊，再点对应的「启动…并换肤」。首次连接需要重新启动应用，工坊不会强制关闭你的聊天。仅关闭窗口不算退出。
 
 **双击后只看到了代码？** 请从 Finder 打开启动文件，Codex 的文件预览只是查看代码。如果提示缺少运行环境，或需要从源码启动，见 [运行与开发说明](DEVELOPMENT.md)。
 
@@ -68,9 +74,9 @@
 
 顶部选择 Codex 或豆包，共用同一套 PNG 库与编辑器，各自保存已应用气泡和连接状态。**切换平台不会自动换肤**；「恢复默认」只恢复当前平台。删除被两边使用的图片时，两边都会恢复默认。
 
-
-
-![同一工坊切换到豆包](docs/images/dual-platform-studio.jpg)
+<p align="center">
+  <img src="docs/images/dual-platform-studio.jpg" alt="同一工坊切换到豆包" width="900">
+</p>
 
 豆包用户消息选择器已内置，首次使用不必编辑配置文件；支持 `/Applications/Doubao.app`，应用升级后可能需要适配。升级时会保留原版 Codex 的素材、设置和已应用气泡；豆包从未应用状态开始。如果之前运行过独立豆包版，请先关闭旧工坊服务，再使用统一工坊，避免两套监控互相覆盖。旧豆包文件夹和私人 `.local/` 不会被合入或公开，原图片仍可通过「连接素材文件夹」使用。
 
@@ -92,32 +98,21 @@
 
 首次打开本机工坊，**外星小猫、LOVE、小猫炒菜** 三款预设已经在库里，不会自动应用到聊天；删掉以后想找回，点「恢复内置预设」。
 
-
-
-* **导入作品设置**：作品详情页可下载 PNG 和配套 `.bubble.json`。导入 PNG、选中它，再点「导入设置」，即可保留这款作品的拉伸与文字位置，确认效果后再应用。
-
-* **在线制作**：在线工坊点「我要制作」后选择 PNG，先看到完整 Codex 模拟页，下方就是与本机工坊共用编辑逻辑的拉伸线、文字框和聊天预览。点「保存设置」可下载原 PNG 与 `.bubble.json`；未点击「我要发布」前，图片只在当前浏览器处理，不上传，也不接入 AI 生图。
-
-* **投稿**：点「我要发布」，填写昵称与气泡名。PNG 和当前设置一起进入私有待审库，维护者人工审核后才会出现在在线气泡库，无需注册。审核标准见 [COMMUNITY.md](COMMUNITY.md)。
-
-* **下载统计**：作品下载次数读取 GitHub Releases 的 PNG 下载统计，可能延迟，并非独立用户数；接口不可用时显示「暂未统计」。本机作品库另显示本机统计，不冒充全站数据。
+- **导入作品设置**：作品详情页可下载 PNG 和配套 `.bubble.json`。导入 PNG、选中它，再点「导入设置」，即可保留这款作品的拉伸与文字位置，确认效果后再应用。
+- **在线制作**：在线工坊点「我要制作」后选择 PNG，先看到完整 Codex 模拟页，下方就是与本机工坊共用编辑逻辑的拉伸线、文字框和聊天预览。点「保存设置」可下载原 PNG 与 `.bubble.json`；未点击「我要发布」前，图片只在当前浏览器处理，不上传，也不接入 AI 生图。
+- **投稿**：点「我要发布」，填写昵称与气泡名。PNG 和当前设置一起进入私有待审库，维护者人工审核后才会出现在在线气泡库，无需注册。审核标准见 [COMMUNITY.md](COMMUNITY.md)。
+- **下载统计**：作品下载次数读取 GitHub Releases 的 PNG 下载统计，可能延迟，并非独立用户数；接口不可用时显示「暂未统计」。本机作品库另显示本机统计，不冒充全站数据。
 
 想画一款自己的气泡？配套的 [气泡设计 skill](https://github.com/kaitongg-bit/douyinQIPAO) 可以帮助你设计原创 PNG，独立维护和更新，不必跟着工坊一起升级。画好后把图片导入这里，再调整、预览、应用。
 
 ## 许可与责任
 
-**禁止商用。** 本项目源码可见，仅限个人学习、研究及其他非商业用途，采用 [非商业使用许可证](LICENSE)。禁止售卖、收费服务、商业产品集成、广告或订阅变现，以及用于商业运营或制作商业素材；修改版本同样受此限制。
+本项目代码采用 [MIT 许可证](LICENSE)，可自由使用、修改和分发，包括商用。
 
-代码公开不等于图片、角色 IP、肖像或商标可以随意使用。用户需自行取得素材授权，并承担内容制作、传播及违法侵权行为的相应责任；取得素材授权也不解除本工具的禁止商用限制。角色 IP、裸露或成人内容也不例外。作者与维护者不为用户素材和用途背书；软件按现状提供，在适用法律允许的范围内不承担由此产生的责任。详见 [素材权利与使用责任](RESPONSIBILITY.md)。
-
-本许可证从 v0.1.10 起适用；此前按 MIT 发布的版本仍按其原许可证处理。
+代码许可不授予图片、角色 IP、肖像或商标等素材的任何权利。用户需自行取得素材授权，并承担内容制作、传播及违法侵权行为的相应责任；角色 IP、裸露或成人内容不因通过本工具制作或展示而获得授权。作者与维护者不为用户素材和用途背书；软件按 MIT 许可证条款"按现状"提供，在适用法律允许的范围内不承担由此产生的责任。详见 [素材权利与使用责任](RESPONSIBILITY.md)。
 
 ## 相关文档
 
-
-
-* [运行与开发说明](DEVELOPMENT.md)
-
-* [社区投稿与作品库](COMMUNITY.md)
-
-* [Agent 工作指引](AGENTS.md)
+- [运行与开发说明](DEVELOPMENT.md)
+- [社区投稿与作品库](COMMUNITY.md)
+- [Agent 工作指引](AGENTS.md)

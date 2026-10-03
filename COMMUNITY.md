@@ -1,49 +1,25 @@
-# 气泡作品库 / Bubble Gallery
+# 社区投稿与作品库 / Community & Gallery
 
-首版采用零预算静态作品库：GitHub Pages 承载页面，GitHub Releases 提供已收录 PNG 下载与下载次数。无需自建服务器、数据库或付费域名。地址：https://kaitongg-bit.github.io/DIYcodex-bubble/
+在线气泡库：https://kaitongg-bit.github.io/DIYcodex-bubble/
 
-## 已提供
+## 如何投稿一款气泡
 
-- 外星小猫、LOVE、小猫炒菜三款预设。
-- 作品卡片、作者、非商业使用说明与 PNG 下载次数。
-- 点击作品进入 Codex 风格模拟聊天，切换浅色/深色、输入短句或长消息。
-- 下载 PNG 与 `.bubble.json`，在本机工坊导入配套设置。
-- 在线工坊复用本机编辑逻辑，先展示完整 Codex 模拟页，再调整拉伸线、文字位置和外观；可保存并下载 PNG 与设置，也可把两份文件交给 Codex 导入本机工坊。
-- 自己的 PNG 在点击「我要发布」前只在浏览器中处理，不上传、不自动发布、不调用 AI。
+1. 打开 [在线工坊](https://kaitongg-bit.github.io/DIYcodex-bubble/workshop.html)，点「我要制作」，上传 PNG。
+2. 调整拉伸线与文字位置，预览短句、长消息和宽窄布局的效果。
+3. 点「我要发布」，填写昵称、气泡名并确认分享授权。PNG 与当前设置一起进入待审队列，审核通过后才会公开。保存或预览不会自动投稿，无需注册账号。
+4. 想保留当前设置：点「保存设置」下载原 PNG 与 `.bubble.json`，在本机工坊导入后继续调整。
 
-下载次数来自 GitHub Releases PNG asset 的 `download_count`，不是去重人数，可能延迟。公共接口失败时显示「暂未统计」，不伪造数字。本机工坊的作品库另有明确标记的本机统计。
+## 审核说明
 
-## 手动投稿
+- 目前是**人工审核**，需要一定时间，不会立即上架，请耐心等待。
+- 审核通过后，作品会出现在在线气泡库；未通过时维护者会说明修改意见。
+- 作品库保持全年龄展示，以下内容不予收录：色情裸露、未经同意的私密影像、涉及未成年人的性内容、仇恨、骚扰及违法侵权内容。
+- 投稿即表示你确认素材来源，并允许社区展示与非商业下载；版权问题可通过文字 Issue 联系维护者。
 
-[打开在线工坊，点击「我要制作」](https://kaitongg-bit.github.io/DIYcodex-bubble/workshop.html)。无需注册，上传 PNG 后先调整并预览；点击「我要发布」，填写昵称、气泡名和分享授权。PNG 与当前设置一起进入私有待审仓库，审核通过后才公开。保存或预览不会自动投稿。
+## 下载统计
 
-作者收到素材后，人工检查：
+作品下载次数来自 GitHub Releases 的 PNG 下载统计，可能延迟，并非独立用户数；接口不可用时显示「暂未统计」。
 
-1. PNG 可正常解码、尺寸合理，没有伪装文件或私人信息。
-2. 短句、长消息、宽窄布局均可读；装饰不被拉坏，拉伸线与文字框合理。
-3. 投稿人说明素材来源，并明确允许社区展示与提供非商业下载；不以代码许可代替素材授权。
-4. 公共作品库保持全年龄展示，不收录色情裸露、未经同意的私密影像、涉及未成年人的性内容、仇恨、骚扰或违法侵权内容。
+## How to submit
 
-审核通过才把 PNG、配置和元数据加入 `presets/`，发布下载资产，再更新静态页面。记录作品版本、授权依据和审核日期；私人审核资料不要提交到公开仓库。退回时说明修改意见。版权问题可以通过文字 Issue 联系维护者，下架时删除页面条目并移除对应 Release 下载资产；已下载副本无法远程收回。
-
-## 维护与部署
-
-配套设置使用版本 1 的 `.bubble.json`（`filename` 与 `config`），由本机工坊导出。先在隔离数据目录验证导入，再将审核后的配置写入 `presets/manifest.json`。每个公开作品记录作者、名称、中英文说明、文件名、配置、下载 URL 和统计 URL。
-
-静态导出：
-
-```sh
-python3 scripts/export-gallery.py /tmp/bubble-gallery
-```
-
-把导出文件发布到 `gh-pages` 分支，Pages 来源选该分支根目录。`gh-pages` 只存公开站点的生成物；桌面工坊源码、测试和维护文档仍在 `main`。普通用户从默认分支下载源码时不会得到 Pages 生成目录。不要导出 `.local/`、用户聊天、连接文件夹或日志。新增 PNG 发布到独立的预设 Release；其统计 API 使用 GitHub 的公共、只读接口，不在网页内放 token。预设 Release 不标记为桌面软件最新版。
-
-匿名接收的 Worker 和维护者审核工具已提供；线上部署配置见 `community/DEPLOYMENT.md`。没有 AI 生图服务。
-
-## Manual submissions
-
-The public gallery is a static site hosted on GitHub Pages. Approved PNGs and their download counts use GitHub Releases. The site needs no paid domain or user account. Anonymous intake uses a Cloudflare Worker and a private GitHub review queue.
-
-Open the [online workshop](https://kaitongg-bit.github.io/DIYcodex-bubble/workshop.html), choose **Create a bubble**, and upload a PNG. Tune it in the shared editor and save the PNG plus `.bubble.json` settings locally. To submit it, choose **Publish my bubble**, enter a nickname and bubble name, and confirm sharing rights. The PNG and settings stay in the private review queue until approved. Maintainer setup is documented in `community/DEPLOYMENT.md`.
-
-The gallery is all-ages. The maintainer reviews safety, rights, readable stretch behavior, and configuration before publishing. Report rights concerns with a text Issue. Removing an entry and its release asset prevents further public access but cannot recall files already downloaded. Download counts are GitHub PNG asset downloads, may be delayed, and are not unique-user counts. No AI generation is provided.
+Open the [online workshop](https://kaitongg-bit.github.io/DIYcodex-bubble/workshop.html), choose **Create a bubble**, and upload a PNG. Tune it, then choose **Publish my bubble**, enter a nickname and bubble name, and confirm sharing rights. The PNG and settings stay in the private review queue until approved — review is manual, so it takes time. The gallery is all-ages; unsafe or infringing content is not accepted.
