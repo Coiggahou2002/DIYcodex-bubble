@@ -36,14 +36,14 @@
 python3 scripts/export-gallery.py /tmp/bubble-gallery
 ```
 
-把导出文件发布到 `gh-pages` 分支，Pages 来源选该分支根目录。不要导出 `.local/`、用户聊天、连接文件夹或日志。新增 PNG 发布到独立的预设 Release；其统计 API 使用 GitHub 的公共、只读接口，不在网页内放 token。预设 Release 不标记为桌面软件最新版。
+把导出文件发布到 `gh-pages` 分支，Pages 来源选该分支根目录。`gh-pages` 只存公开站点的生成物；桌面工坊源码、测试和维护文档仍在 `main`。普通用户从默认分支下载源码时不会得到 Pages 生成目录。不要导出 `.local/`、用户聊天、连接文件夹或日志。新增 PNG 发布到独立的预设 Release；其统计 API 使用 GitHub 的公共、只读接口，不在网页内放 token。预设 Release 不标记为桌面软件最新版。
 
 匿名接收的 Worker 和维护者审核工具已提供；线上部署配置见 `community/DEPLOYMENT.md`。没有 AI 生图服务。
 
 ## Manual submissions
 
-This version is a static gallery hosted on GitHub Pages. Approved PNGs and their download counts use GitHub Releases. The static gallery needs no paid domain or login. Anonymous intake uses a Cloudflare Worker and a private GitHub review queue.
+The public gallery is a static site hosted on GitHub Pages. Approved PNGs and their download counts use GitHub Releases. The site needs no paid domain or user account. Anonymous intake uses a Cloudflare Worker and a private GitHub review queue.
 
-Preview a PNG locally in your browser; it is never uploaded or automatically published. Open [the gallery’s contribution form](https://kaitongg-bit.github.io/DIYcodex-bubble/#contribute), enter a nickname and bubble name, choose a PNG and confirm sharing rights. The image stays private until reviewed. Maintainer setup is documented in `community/DEPLOYMENT.md`.
+Open the [online workshop](https://kaitongg-bit.github.io/DIYcodex-bubble/workshop.html), choose **Create a bubble**, and upload a PNG. Tune it in the shared editor and save the PNG plus `.bubble.json` settings locally. To submit it, choose **Publish my bubble**, enter a nickname and bubble name, and confirm sharing rights. The PNG and settings stay in the private review queue until approved. Maintainer setup is documented in `community/DEPLOYMENT.md`.
 
 The gallery is all-ages. The maintainer reviews safety, rights, readable stretch behavior, and configuration before publishing. Report rights concerns with a text Issue. Removing an entry and its release asset prevents further public access but cannot recall files already downloaded. Download counts are GitHub PNG asset downloads, may be delayed, and are not unique-user counts. No AI generation is provided.

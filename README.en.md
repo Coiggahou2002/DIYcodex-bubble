@@ -14,6 +14,8 @@ An independent appearance tool. **Not an official OpenAI or Codex product.** It 
 
 [Bubble gallery / Contribute](https://kaitongg-bit.github.io/DIYcodex-bubble/) · [Download the latest release](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [Create your own bubble](#want-to-create-your-own-bubble) · [Usage responsibility](#license-and-responsibility)
 
+The desktop studio source stays on the default `main` branch. The public gallery is generated separately and published from `gh-pages`, so normal source downloads do not include the Pages output.
+
 ![Alien-cat bubbles in the Codex-inspired chat simulator](docs/images/chat-simulation.png)
 
 *Try the artwork with short and long messages. This is an independent simulation, not a real Codex screenshot.*
@@ -103,4 +105,4 @@ These terms apply from v0.1.10 onward. Earlier MIT-licensed releases retain thei
 
 ---
 
-Contributing? [Development notes](DEVELOPMENT.md) · [Validation history](VALIDATION.md) · [Agent instructions](AGENTS.md)
+Contributing? [Development notes](DEVELOPMENT.md) · [Community notes](COMMUNITY.md) · [Agent instructions](AGENTS.md)

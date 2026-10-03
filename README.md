@@ -14,6 +14,8 @@
 
 [在线气泡库 / 贡献气泡](https://kaitongg-bit.github.io/DIYcodex-bubble/) · [下载最新版](https://github.com/kaitongg-bit/DIYcodex-bubble/releases/latest) · [想画新气泡？](#想画一款自己的气泡) · [使用责任](RESPONSIBILITY.md)
 
+桌面工坊源码在默认 `main` 分支；在线作品库是单独生成并发布到 `gh-pages` 的 Pages 站点，不会混进普通源码下载。
+
 ![外星小猫在 Codex 风格的聊天模拟器中](docs/images/chat-simulation.png)
 
 *聊天模拟预览：看看短句、长消息中的气泡效果。独立模拟页面，不是真实 Codex 截图。*
@@ -103,4 +105,4 @@
 
 ---
 
-想参与改进？[开发说明](DEVELOPMENT.md) · [验证记录](VALIDATION.md) · [Agent 指引](AGENTS.md)
+想参与改进？[开发说明](DEVELOPMENT.md) · [社区说明](COMMUNITY.md) · [Agent 指引](AGENTS.md)

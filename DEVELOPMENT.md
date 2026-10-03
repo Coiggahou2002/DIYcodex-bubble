@@ -40,7 +40,7 @@ node --check app/bridge.mjs
 node --check app/static/app.js
 ```
 
-更多验证记录见 [VALIDATION.md](VALIDATION.md)。截图必须使用隔离演示数据，不包含用户私人素材、路径或聊天。
+截图和本地验收必须使用隔离演示数据，不包含用户私人素材、路径或聊天。历史验收记录保留在 Git 提交历史中，不作为终端用户文档发布。
 
 ## 静态作品库与模拟聊天
 
@@ -49,6 +49,8 @@ node --check app/static/app.js
 `presets/manifest.json` 管理已获分发授权的内置 PNG 与配置。首次读取本机库将它们复制到私有数据目录，不覆盖用户设置；删除后不会自行重建，显式恢复才补回。
 
 `python3 scripts/export-gallery.py /tmp/bubble-gallery` 导出零后端站点。本机 `/gallery` 使用本机下载计数；静态页面从公开 GitHub Releases API 读取全站 PNG 下载统计。PNG 的私有预览使用浏览器 Blob URL，无上传。社区收录规则见 COMMUNITY.md。
+
+公开作品库的导出文件只发布到仓库的 `gh-pages` 分支，由 GitHub Pages 使用；它们不会进入默认 `main` 分支，也不会随桌面工坊源码下载。普通贡献者克隆 `main` 即可开发本机工坊。发布 Pages 时先运行导出脚本，再在部署分支提交生成物。
 
 ## 双平台适配
 
