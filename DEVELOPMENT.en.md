@@ -34,6 +34,8 @@ Runtime styles are injected through the CDP port bound to `127.0.0.1:19327`; the
 
 Only macOS desktop builds are verified so far; app updates may require adaptation.
 
+Windows support is experimental: `app/launch.py` is the cross-platform launcher the `.bat` files call; `server.py` finds Store ChatGPT/Codex with `Get-AppxPackage -Name 'OpenAI.*'` (`app\Codex.exe` or `app\ChatGPT.exe` inside the package), finds Doubao from its uninstall registry entry, and accepts `BUBBLE_STUDIO_CODEX_EXE` / `BUBBLE_STUDIO_DOUBAO_EXE` overrides; it uses `tasklist` to detect a normally launched app and PowerShell's FolderBrowserDialog to pick folders. CI (`.github/workflows/test.yml`) runs the tests and a launcher smoke test on macOS and Windows, without real desktop apps.
+
 `Start Bubble Apps.command` starts the local studio and calls `/api/launch-active`, launching each configured app with its own CDP port. The per-platform monitor then reconnects and reapplies the saved style. A normally launched app cannot gain a debugging port after startup, so the endpoint asks the user to quit it manually and never terminates the process itself.
 
 ## Verification

@@ -70,6 +70,8 @@
 
 **完全退出应用后如何恢复？** 保存正在输入的内容，用 `⌘Q` 完全退出 Codex / ChatGPT 和豆包，再从 Finder 双击 `Start Bubble Apps.command`。它会启动工坊，并一次启动所有已经选好气泡的应用；连接后气泡自动恢复。也可以在工坊点「同时恢复已选气泡」。直接点击应用原来的图标正常启动时，不会带上工坊需要的本机调试端口，因此气泡不会出现。工坊不会强制退出你已经打开的应用；若提示应用已普通启动，请手动 `⌘Q` 后再试。
 
+**Windows（实验性，尚未在真机上验证）：** 用 `Start Bubble Studio.bat` 和 `Start Bubble Apps.bat` 代替 `.command` 文件（需要 Python 3.9+，从 python.org 安装时勾选 Add to PATH；以及 Node.js 22+）。ChatGPT / Codex 通过 Microsoft Store 安装包查找，豆包通过安装程序的卸载记录查找；找不到应用时，把环境变量 `BUBBLE_STUDIO_CODEX_EXE` 或 `BUBBLE_STUDIO_DOUBAO_EXE` 设为对应 `.exe` 的完整路径。要重新连接，先完全关闭应用（托盘里若还有图标，右键退出），再运行 `Start Bubble Apps.bat`。
+
 **双击后只看到了代码？** 请从 Finder 打开 `.command` 文件，Codex 的文件预览只是查看代码。如果提示缺少运行环境，或需要从源码启动，见 [运行与开发说明](DEVELOPMENT.md)。
 
 ## 使用说明

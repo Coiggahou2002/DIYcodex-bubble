@@ -11,6 +11,11 @@ LOCK=threading.RLock()
 STOP=threading.Event()
 DEFAULT={'folders':[],'presets':{},'favorites':[],'active':None,'debugPort':19327,'trash':[],'galleryDownloads':{}}
 PLATFORMS={'codex':{'name':'Codex','debugPort':19327,'apps':['/Applications/ChatGPT.app/Contents/MacOS/ChatGPT','/Applications/Codex.app/Contents/MacOS/Codex']},'doubao':{'name':'豆包','debugPort':19326,'apps':['/Applications/Doubao.app/Contents/MacOS/Doubao']}}
+# Windows: ChatGPT/Codex ship as Store (MSIX) packages under WindowsApps, found via Get-AppxPackage;
+# Doubao uses a regular installer, found via its uninstall registry entry. Env vars override both.
+WINDOWS_APPS={'codex':{'env':'BUBBLE_STUDIO_CODEX_EXE','packages':'OpenAI.*','exes':['app/Codex.exe','app/ChatGPT.exe'],'names':[]},
+ 'doubao':{'env':'BUBBLE_STUDIO_DOUBAO_EXE','packages':None,'exes':['Doubao.exe','Application/Doubao.exe'],'names':['豆包','Doubao']}}
+DETACHED_FLAGS=0x00000008|0x00000200|0x08000000  # DETACHED_PROCESS|CREATE_NEW_PROCESS_GROUP|CREATE_NO_WINDOW
 STATUSES={key:{'connected':False,'matched':0} for key in PLATFORMS}
 PORT=19329
 NAMES={'cat-big-paw-scruffy':'毛茸茸猫咪 · 大爪子','cat-big-paw-doodle':'涂鸦猫咪 · 大爪子','chef-cat-wok-doodle':'猫咪主厨','onigiri-cat-doodle':'饭团猫咪','guangdong-stool':'广东小板凳','rippled-glass-nine-slice':'水波玻璃','mondrian-painting':'蒙德里安画框','mondrian':'蒙德里安','colorful-happy-doodle':'彩色快乐涂鸦','happy-stickman':'快乐小人','love-square-charcoal':'LOVE 方形炭笔','love-charcoal':'LOVE 炭笔'}
@@ -32,9 +37,18 @@ def clean_trash(s):
  remaining=[entry for entry in s.get('trash',[]) if Path(entry['stored']).is_file()]
  if remaining!=s.get('trash',[]):s['trash']=remaining;save(s)
  return s
+def supported():
+ if sys.platform not in ('darwin','win32'):raise ValueError('目前仅支持 macOS 和 Windows')
 def choose_folder(language="zh"):
- if sys.platform!='darwin':raise ValueError('目前仅支持 macOS 文件夹选择')
+ supported()
  prompt='Choose your bubble asset folder' if language.startswith('en') else '选择气泡素材文件夹'
+ if sys.platform=='win32':
+  script=("[Console]::OutputEncoding=[Text.Encoding]::UTF8;Add-Type -AssemblyName System.Windows.Forms;"
+   "$owner=New-Object System.Windows.Forms.Form -Property @{TopMost=$true};$d=New-Object System.Windows.Forms.FolderBrowserDialog;"
+   "$d.Description=$env:BUBBLE_PROMPT;if($d.ShowDialog($owner) -eq 'OK'){$d.SelectedPath}")
+  result=subprocess.run(['powershell','-NoProfile','-STA','-Command',script],capture_output=True,text=True,encoding='utf-8',env={**os.environ,'BUBBLE_PROMPT':prompt})
+  if result.returncode:raise ValueError('无法打开文件夹选择窗口，请重试')
+  return result.stdout.strip()
  script='try\nreturn POSIX path of (choose folder with prompt "'+prompt+'")\non error number -128\nreturn ""\nend try'
  result=subprocess.run(['/usr/bin/osascript','-e',script],capture_output=True,text=True)
  if result.returncode:raise ValueError('无法打开文件夹选择窗口，请重试')
@@ -117,20 +131,65 @@ def review_image(sid):
  result=subprocess.run(['gh','api',f'repos/kaitongg-bit/DIYcodex-bubble-submissions/contents/pending/{sid}/bubble.png'],capture_output=True,text=True,timeout=30)
  if result.returncode:raise ValueError('找不到待审图片')
  return base64.b64decode(json.loads(result.stdout)['content'])
-def launch_platform(key,s):
- if sys.platform!='darwin':raise ValueError('目前仅支持 macOS')
- descriptor=PLATFORMS[key]
- apps=[p for p in map(Path,descriptor['apps']) if p.exists()]
- if not apps:raise ValueError('未找到豆包桌面应用，请确认已安装 /Applications/Doubao.app' if key=='doubao' else '未找到 ChatGPT 或 Codex 应用')
+def windows_app_dirs(key):
+ spec=WINDOWS_APPS[key];dirs=[]
+ if spec['packages']:
+  result=subprocess.run(['powershell','-NoProfile','-Command',f"[Console]::OutputEncoding=[Text.Encoding]::UTF8;Get-AppxPackage -Name '{spec['packages']}' | ForEach-Object {{ $_.InstallLocation }}"],capture_output=True,text=True,encoding='utf-8',timeout=20)
+  dirs+=[line.strip() for line in (result.stdout or '').splitlines() if line.strip()]
+ if spec['names']:
+  import winreg
+  for hive,root in [(winreg.HKEY_CURRENT_USER,r'Software\Microsoft\Windows\CurrentVersion\Uninstall'),(winreg.HKEY_LOCAL_MACHINE,r'Software\Microsoft\Windows\CurrentVersion\Uninstall'),(winreg.HKEY_LOCAL_MACHINE,r'Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall')]:
+   try:parent=winreg.OpenKey(hive,root)
+   except OSError:continue
+   with parent:
+    for i in range(winreg.QueryInfoKey(parent)[0]):
+     try:
+      with winreg.OpenKey(parent,winreg.EnumKey(parent,i)) as entry:
+       name=str(winreg.QueryValueEx(entry,'DisplayName')[0])
+       if not any(n.lower() in name.lower() for n in spec['names']):continue
+       for field in ('InstallLocation','DisplayIcon'):
+        try:value=str(winreg.QueryValueEx(entry,field)[0]).split(',')[0].strip('"')
+        except OSError:continue
+        if value:dirs.append(str(Path(value).parent) if value.lower().endswith('.exe') else value)
+     except OSError:continue
+  local=os.environ.get('LOCALAPPDATA','')
+  dirs+=[d for d in (local and str(Path(local)/'Doubao'),local and str(Path(local)/'Programs'/'Doubao'),os.environ.get('ProgramFiles','') and str(Path(os.environ['ProgramFiles'])/'Doubao')) if d]
+ return dirs
+def app_candidates(key):
+ if sys.platform=='darwin':return [p for p in map(Path,PLATFORMS[key]['apps']) if p.exists()]
+ spec=WINDOWS_APPS[key];override=os.environ.get(spec['env'])
+ if override:return [Path(override)] if Path(override).exists() else []
+ found=[]
+ for folder in windows_app_dirs(key):
+  for exe in spec['exes']:
+   p=Path(folder)/exe
+   if p.exists() and p not in found:found.append(p)
+ return found
+def running_apps(apps):
+ if sys.platform=='win32':
+  result=subprocess.run(['tasklist','/FO','CSV','/NH'],capture_output=True,text=True,check=True)
+  images={line.split('","')[0].strip('"').lower() for line in (result.stdout or '').splitlines() if line}
+  return next((app for app in apps if app.name.lower() in images),None)
  processes=subprocess.run(['/bin/ps','-axo','command='],capture_output=True,text=True,check=True)
  lines=(processes.stdout or '').splitlines()
- running_app=next((app for app in apps if any(line==str(app) or line.startswith(str(app)+' ') for line in lines)),None)
+ return next((app for app in apps if any(line==str(app) or line.startswith(str(app)+' ') for line in lines)),None)
+def launch_platform(key,s):
+ supported()
+ descriptor=PLATFORMS[key];windows=sys.platform=='win32'
+ apps=app_candidates(key)
+ if not apps:
+  if windows:raise ValueError('未找到豆包桌面应用，可设置环境变量 BUBBLE_STUDIO_DOUBAO_EXE 指向 Doubao.exe' if key=='doubao' else '未找到 ChatGPT 或 Codex 应用，可设置环境变量 BUBBLE_STUDIO_CODEX_EXE 指向它的 exe')
+  raise ValueError('未找到豆包桌面应用，请确认已安装 /Applications/Doubao.app' if key=='doubao' else '未找到 ChatGPT 或 Codex 应用')
+ running_app=running_apps(apps)
  app=running_app or apps[0]
  if running_app:
   if bridge('status',key).get('connected'):return {'platform':key,'state':'connected','message':f'{descriptor["name"]} 已连接，气泡会自动恢复。'}
-  return {'platform':key,'state':'quit-required','message':f'{descriptor["name"]} 已普通启动。请保存输入并用 ⌘Q 完全退出，再点击启动。'}
+  quit_hint='关掉窗口（托盘里若还有图标，右键退出）' if windows else '用 ⌘Q'
+  return {'platform':key,'state':'quit-required','message':f'{descriptor["name"]} 已普通启动。请保存输入并{quit_hint}完全退出，再点击启动。'}
  with (DATA/'app-start.log').open('a') as log:
-  subprocess.Popen([str(app),'--remote-debugging-address=127.0.0.1',f'--remote-debugging-port={s["platforms"][key]["debugPort"]}'],stdout=log,stderr=log,start_new_session=True)
+  args=[str(app),'--remote-debugging-address=127.0.0.1',f'--remote-debugging-port={s["platforms"][key]["debugPort"]}']
+  if windows:subprocess.Popen(args,stdout=log,stderr=log,stdin=subprocess.DEVNULL,creationflags=DETACHED_FLAGS)
+  else:subprocess.Popen(args,stdout=log,stderr=log,start_new_session=True)
  return {'platform':key,'state':'starting','message':f'{descriptor["name"]} 正在启动，连接后会自动恢复已选气泡。'}
 def watch(platform):
  while not STOP.wait(3):
@@ -220,9 +279,10 @@ class Handler(BaseHTTPRequestHandler):
      if str(p) not in s['folders']:s['folders'].append(str(p))
      save(s);return self.send({'ok':True})
     if self.path=='/api/open-trash':
-     if sys.platform!='darwin':raise ValueError('目前仅支持 macOS')
+     supported()
      trash=DATA/'trash';trash.mkdir(exist_ok=True)
-     subprocess.run(['/usr/bin/open',str(trash.resolve())],check=True,capture_output=True)
+     if sys.platform=='win32':os.startfile(str(trash.resolve()))
+     else:subprocess.run(['/usr/bin/open',str(trash.resolve())],check=True,capture_output=True)
      return self.send({'ok':True})
     if self.path=='/api/import':
      data=base64.b64decode(body['data'],validate=True)

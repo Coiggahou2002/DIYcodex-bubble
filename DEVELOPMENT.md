@@ -34,6 +34,8 @@ PNG 两轴分别支持 2–4096 px；直接导入单张限制 2 MB，连接文�
 
 目前仅 macOS 桌面端经过验证，应用升级后可能需要适配。
 
+Windows 支持为实验性：`app/launch.py` 是 `.bat` 启动器调用的跨平台启动脚本；`server.py` 用 `Get-AppxPackage -Name 'OpenAI.*'` 找 Store 版 ChatGPT/Codex（包内 `app\Codex.exe` 或 `app\ChatGPT.exe`），用卸载注册表项找豆包，`BUBBLE_STUDIO_CODEX_EXE` / `BUBBLE_STUDIO_DOUBAO_EXE` 可覆盖；用 `tasklist` 判断应用是否已普通启动，用 PowerShell 的 FolderBrowserDialog 选文件夹。CI（`.github/workflows/test.yml`）在 macOS 与 Windows 上跑测试和启动器冒烟，不含真实桌面应用。
+
 `Start Bubble Apps.command` 在本机启动工坊后调用 `/api/launch-active`，为每个已应用平台分别以对应 CDP 端口启动应用。后台监控继续按平台重连并应用已保存的样式。普通启动的应用无法在运行中追加调试端口，接口只提示用户手动完全退出，不强制结束进程。完全退出后通过该启动器重新打开，才能恢复连接。
 
 ## 验证

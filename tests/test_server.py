@@ -146,6 +146,7 @@ class StudioTests(unittest.TestCase):
   self.assertEqual(migrated['platforms']['codex']['active']['id'],a['id']);self.assertIsNone(migrated['platforms']['doubao']['active'])
   self.request('/api/platform',{'platform':'doubao'})
   self.assertEqual(server.state()['presets'][a['id']],a['config']);self.assertEqual(server.state()['platforms']['codex']['active']['version'],'legacy')
+ @unittest.skipIf(os.name=='nt','uses macOS app paths')
  def test_launch_uses_selected_platform_and_its_port(self):
   from subprocess import CompletedProcess
   exists=Path.exists
@@ -155,6 +156,7 @@ class StudioTests(unittest.TestCase):
     self.request('/api/launch',{'platform':key})
     self.assertEqual(launch.call_args.args[0],[exe,'--remote-debugging-address=127.0.0.1',f'--remote-debugging-port={port}'])
     self.assertEqual(run.call_args.args[0][0],'/bin/ps')
+ @unittest.skipIf(os.name=='nt','uses macOS app paths')
  def test_launch_active_starts_both_saved_apps_without_switching_platform(self):
   from subprocess import CompletedProcess
   s=server.state()
@@ -168,6 +170,7 @@ class StudioTests(unittest.TestCase):
    self.assertEqual(len(launch.call_args_list),2)
    self.assertEqual({call.args[0][-1] for call in launch.call_args_list},{'--remote-debugging-port=19327','--remote-debugging-port=19326'})
   self.assertEqual(server.state()['platform'],'doubao')
+ @unittest.skipIf(os.name=='nt','uses macOS app paths')
  def test_running_app_without_debug_port_is_not_force_quit(self):
   from subprocess import CompletedProcess
   s=server.state();s['platforms']['doubao']['active']={'id':'doubao','path':str(self.folder/'one.png'),'config':server.defaults(198,162),'version':'test'};server.save(s)
@@ -177,6 +180,39 @@ class StudioTests(unittest.TestCase):
    result=self.request('/api/launch-active',{})
    self.assertEqual(result['results'][0]['state'],'quit-required')
    launch.assert_not_called()
+ def test_windows_launch_uses_env_override_and_detached_process(self):
+  from subprocess import CompletedProcess
+  exe=Path(TASK_DATA.name)/'Doubao.exe';exe.write_bytes(b'')
+  self.request('/api/platform',{'platform':'doubao'})
+  with patch.object(server.sys,'platform','win32'),patch.dict(os.environ,{'BUBBLE_STUDIO_DOUBAO_EXE':str(exe)}),patch.object(server.subprocess,'run',return_value=CompletedProcess([],0,'"explorer.exe","1","Console","1","10 K"\n','')) as run,patch.object(server.subprocess,'Popen') as launch:
+   result=self.request('/api/launch',{'platform':'doubao'})
+  self.assertEqual(result['state'],'starting')
+  self.assertEqual(run.call_args.args[0][0],'tasklist')
+  self.assertEqual(launch.call_args.args[0],[str(exe),'--remote-debugging-address=127.0.0.1','--remote-debugging-port=19326'])
+  self.assertEqual(launch.call_args.kwargs['creationflags'],server.DETACHED_FLAGS)
+ def test_windows_running_app_without_debug_port_is_not_force_quit(self):
+  from subprocess import CompletedProcess
+  exe=Path(TASK_DATA.name)/'Doubao.exe';exe.write_bytes(b'')
+  self.request('/api/platform',{'platform':'doubao'})
+  with patch.object(server.sys,'platform','win32'),patch.dict(os.environ,{'BUBBLE_STUDIO_DOUBAO_EXE':str(exe)}),patch.object(server.subprocess,'run',return_value=CompletedProcess([],0,'"Doubao.exe","4242","Console","1","90 K"\n','')),patch.object(server,'bridge',return_value={'connected':False}),patch.object(server.subprocess,'Popen') as launch:
+   result=self.request('/api/launch',{'platform':'doubao'})
+  self.assertEqual(result['state'],'quit-required');self.assertNotIn('⌘Q',result['message'])
+  launch.assert_not_called()
+ def test_windows_finds_codex_store_package(self):
+  from subprocess import CompletedProcess
+  package=Path(TASK_DATA.name)/'OpenAI.Codex_26.930.2377.0_x64__2p2nqsd0c76g0';(package/'app').mkdir(parents=True,exist_ok=True);(package/'app'/'Codex.exe').write_bytes(b'')
+  with patch.object(server.sys,'platform','win32'),patch.dict(os.environ,{'BUBBLE_STUDIO_CODEX_EXE':''}),patch.object(server.subprocess,'run',return_value=CompletedProcess([],0,str(package)+'\r\n','')) as run:
+   self.assertEqual(server.app_candidates('codex'),[package/'app'/'Codex.exe'])
+  self.assertIn("Get-AppxPackage -Name 'OpenAI.*'",run.call_args.args[0][-1])
+ def test_windows_folder_picker_uses_powershell(self):
+  from subprocess import CompletedProcess
+  with patch.object(server.sys,'platform','win32'),patch.object(server.subprocess,'run',return_value=CompletedProcess([],0,str(self.folder)+'\r\n','')) as run:
+   self.assertEqual(self.request('/api/choose-folder',{})['ok'],True)
+  self.assertEqual(run.call_args.args[0][:3],['powershell','-NoProfile','-STA'])
+  self.assertIn(str(self.folder.resolve()),server.state()['folders'])
+ def test_unsupported_os_is_rejected(self):
+  with patch.object(server.sys,'platform','linux'),self.assertRaises(urllib.error.HTTPError) as err:self.request('/api/launch',{})
+  self.assertEqual(err.exception.code,400)
  def test_asset_route_cannot_read_arbitrary_path(self):
   with self.assertRaises(urllib.error.HTTPError) as err:self.request('/asset/../../app/server.py')
   self.assertEqual(err.exception.code,404)

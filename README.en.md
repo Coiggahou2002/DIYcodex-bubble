@@ -70,6 +70,8 @@ Currently supported on **macOS with the Codex / ChatGPT or Doubao desktop app**.
 
 **After fully quitting the apps:** Save your input, quit Codex / ChatGPT and Doubao with `⌘Q`, then double-click `Start Bubble Apps.command` in Finder. It starts the studio and launches every app with a selected bubble; the saved bubbles return when connected. You can also click **Launch all selected bubbles** in the studio. Launching the original app icons does not enable the local debugging ports required by the studio. The studio never force-quits an already running app; if it reports a normal launch, quit that app manually and try again.
 
+**Windows (experimental, not yet verified on a real machine):** use `Start Bubble Studio.bat` and `Start Bubble Apps.bat` instead of the `.command` files (Python 3.9+ from python.org with "Add to PATH", and Node.js 22+). ChatGPT / Codex are found through their Microsoft Store packages and Doubao through its installer entry; if the studio can't find an app, set `BUBBLE_STUDIO_CODEX_EXE` or `BUBBLE_STUDIO_DOUBAO_EXE` to the full path of its `.exe`. To reconnect, close the app fully (also from the tray, if it has an icon there), then run `Start Bubble Apps.bat`.
+
 **Seeing source code after double-clicking?** Open the launcher from Finder — Codex's file preview only displays its contents. For runtime requirements and running from source, see [Development notes](DEVELOPMENT.md).
 
 ## Usage

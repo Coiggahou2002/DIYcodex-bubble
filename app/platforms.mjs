@@ -17,6 +17,8 @@ export function acceptsTarget(target,key){
   return key==='doubao'&&((url.protocol==='doubao:'&&url.hostname==='doubao-chat')||
    (url.protocol==='https:'&&(url.hostname==='doubao.com'||url.hostname.endsWith('.doubao.com')))||
    (url.protocol==='app:'&&(url.hostname==='-'||url.hostname==='doubao'))||
-   (url.protocol==='file:'&&decodeURIComponent(url.pathname).includes('/Doubao.app/')));
+   (url.protocol==='file:'&&isDoubaoFile(decodeURIComponent(url.pathname))));
  }catch{return false;}
 }
+// macOS bundle path, or a Windows install folder such as /C:/Users/me/AppData/Local/Doubao/...
+function isDoubaoFile(path){return path.includes('/Doubao.app/')||(/^\/[A-Za-z]:\//.test(path)&&/\/doubao\//i.test(path));}

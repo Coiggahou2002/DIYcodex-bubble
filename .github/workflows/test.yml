@@ -1,0 +1,27 @@
+name: test
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: python -m unittest discover -s tests -v
+      - run: node --test tests/bridge.test.mjs
+      - run: node --check app/bridge.mjs
+      - name: Launcher smoke test (starts the studio, no desktop apps)
+        shell: bash
+        env: {BUBBLE_STUDIO_DATA: "${{ runner.temp }}/bubble-data", BROWSER: "true"}
+        run: |
+          python -c "import sys;sys.path.insert(0,'app');import launch;launch.start_studio();assert launch.alive();launch.launch_active()"
+          curl -fsS http://127.0.0.1:19329/api/library | python -c "import json,sys;d=json.load(sys.stdin);assert len(d['items'])==3,d;print('presets',len(d['items']))"
+      - name: App discovery on a bare Windows runner returns nothing, without crashing
+        if: runner.os == 'Windows'
+        run: python -c "import sys;sys.path.insert(0,'app');import server;print('codex',server.app_candidates('codex'));print('doubao',server.app_candidates('doubao'))"
