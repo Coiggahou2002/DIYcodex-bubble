@@ -142,7 +142,7 @@ class StudioTests(unittest.TestCase):
    self.request('/api/platform',{'platform':'codex'});self.assertEqual(server.state()['debugPort'],19327)
  def test_legacy_state_migrates_to_codex_without_losing_settings(self):
   a=self.connect()[0];legacy={**json.loads(json.dumps(server.DEFAULT)),'active':{'id':a['id'],'path':a['path'] if 'path' in a else str(self.folder/'one.png'),'config':a['config'],'version':'legacy'},'presets':{a['id']:a['config']}}
-  server.STATE.write_text(json.dumps(legacy));migrated=server.state()
+  server.STATE.write_text(json.dumps(legacy),encoding='utf-8');migrated=server.state()
   self.assertEqual(migrated['platforms']['codex']['active']['id'],a['id']);self.assertIsNone(migrated['platforms']['doubao']['active'])
   self.request('/api/platform',{'platform':'doubao'})
   self.assertEqual(server.state()['presets'][a['id']],a['config']);self.assertEqual(server.state()['platforms']['codex']['active']['version'],'legacy')
